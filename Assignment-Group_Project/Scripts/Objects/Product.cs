@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 
-namespace Assignment_Group_Project.Scripts
+namespace Assignment_Group_Project.Scripts.Objects
 {
     public class Product
     {
