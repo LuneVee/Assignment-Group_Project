@@ -6,6 +6,7 @@
         {
             Console.WriteLine("Hello, World!");
             Console.WriteLine("Hello, classes");
+            Console.WriteLine("Testar igen efter delete o clone");
         }
     }
 }
