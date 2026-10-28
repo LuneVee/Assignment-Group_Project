@@ -6,5 +6,6 @@ namespace Assignment_Group_Project.Scripts
 {
     public class MainMenu
     {
+        
     }
 }
