@@ -15,6 +15,8 @@ namespace Assignment_Group_Project.Scripts.Objects
         public int ProductStockQuantity { get; set; }
         public string? SupplierName { get; set; }
         public DateTime AddOrderDate { get; set; } 
+        // Gör en lista av framtida sökfunktion
+        public List<string> tagsList = new List<string>();
 
 
         // Metod som skriver ut summering av produkterna.
