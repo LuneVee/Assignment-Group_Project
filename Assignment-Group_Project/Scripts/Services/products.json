@@ -1,0 +1,20 @@
+[
+  {
+    "ProductName": "Laptop",
+    "ProductPrice": 799.00,
+    "ProductStockQuantity": 10,
+    "AddOrderDate": "2026-10-30"
+  },
+  {
+    "ProductName": "Mouse",
+    "ProductPrice": 24.00,
+    "ProductStockQuantity": 25,
+    "AddOrderDate": "2026-10-30"
+  },
+  {
+    "ProductName": "Keyboard",
+    "ProductPrice": 49.00,
+    "ProductStockQuantity": 15,
+    "AddOrderDate": "2026-10-30"
+  }
+]
