@@ -9,17 +9,20 @@ namespace Assignment_Group_Project.Scripts.Objects
     {
         //Attributer
 
-        public int ArticleNumber { get; set; }
+        public int ProductArticleNumber { get; set; }
         public string? ProductName { get; set; }
-        public decimal Price { get; set; }
-        public int StockQuantity { get; set; }
-        public int SupplierID { get; set; }
+        public decimal ProductPrice { get; set; }
+        public int ProductStockQuantity { get; set; }
+        public string? SupplierName { get; set; }
+        public DateTime AddOrderDate { get; set; } 
+        // Gör en lista av framtida sökfunktion
+        public List<string> tagsList = new List<string>();
 
 
         // Metod som skriver ut summering av produkterna.
         public string GetSummaryProduct()
         {
-            return $"{ProductName}, Price: {Price}, Articlenumber: {ArticleNumber}, Amount in stock: {StockQuantity}";
+            return $"{ProductName}, Price: {ProductPrice}, Articlenumber: {ProductArticleNumber}, Amount in stock: {ProductStockQuantity}";
         }
 
     }
