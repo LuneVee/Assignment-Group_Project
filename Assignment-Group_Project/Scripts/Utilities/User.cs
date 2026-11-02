@@ -7,18 +7,21 @@ namespace Assignment_Group_Project.Scripts.Utilities
     static class User
     {
 
+        //Variables!
         public static string? input { get; set; }
+        public static string? inputChoice { get; set; }
         public static int inputInt;
 
- //Read ``string´´ Input!
-        public static void ReadInput()                                     //Read whatever the Input is. Made this because I don't want to type ``User.Input = Console.ReadLine()´´ all the time!
+
+        //Read ``string´´ Input!
+        public static void ReadInput()                                      //Read whatever the Input is. Made this because I don't want to type ``User.Input = Console.ReadLine()´´ all the time!
         {
-            input = Console.ReadLine();                                           //Read what User entered and set it as User Input!
-            while (input.IsWhiteSpace())                                          //While User Input is empty or only space!
+            input = Console.ReadLine();                                         //Read what User entered and set it as User Input!
+            while (input.IsWhiteSpace())                                        //While User Input is empty or only space!
             {
                 //Print.InvalidCommandBig();
-                Console.WriteLine("Empty Input! Type something!");               //Tell that the User has entered a empty Input and that they need to try again!
-                input = Console.ReadLine();                                      //Read what User entered and set it as User Input!
+                Console.WriteLine("Empty Input! Type something!");              //Tell that the User has entered a empty Input and that they need to try again!
+                input = Console.ReadLine();                                     //Read what User entered and set it as User Input!
             }
 
         }
