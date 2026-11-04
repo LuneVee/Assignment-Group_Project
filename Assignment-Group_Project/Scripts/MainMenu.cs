@@ -47,6 +47,9 @@ namespace Assignment_Group_Project.Scripts
 
                 }
             }
-        }
+            Order.UpdateOrder();
+            Order.AddOutgoingOrder();
+            Order.AddIncomingOrder();}
+
     }
 }

@@ -1,13 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using Assignment_Group_Project.Scripts.Objects;
+using Spectre.Console;
 
 public static class Order
 {
+
     // string orderType bedtyder att man kan skriva in en string som parameter när man anropar metoden.
     // Så att man kan använda metoden flera gånger med olika strings.
     private static void CreateOrder(string orderType)
     {
+
+        // Hämtar data från data.json och sparar det i appData.
+        DataStorage dataStorage = new DataStorage();
+        AppData appData = dataStorage.Load();
+
         // Skapar en lista, den sparar produkterna i ordern.
         List<Product> orderedProducts = new();
 
@@ -20,6 +27,14 @@ public static class Order
 
         // Spara datum och tid för ordern.
         DateTime orderDate = DateTime.Now;
+
+        // Skapar ett objekt som innehåller info om den nya ordern.
+        OrderDetails newOrder = new OrderDetails
+        {
+            OrderNumber = orderNumber,
+            OrderDate = orderDate,
+            SupplierName = null // ÄNDRAS senare när det är en inkommande order
+        };
 
         Console.WriteLine("Starting Order.");
 
@@ -70,6 +85,7 @@ public static class Order
             // Lägger till produkten i orderlistan.
             orderedProducts.Add(newProduct);
 
+
             Console.WriteLine("Product added!");
 
 
@@ -85,6 +101,10 @@ public static class Order
                 addingMoreProducts = false;
             }
         }
+            // Kopplar produktlistan till orderobjektet.
+            newOrder.OrderedProducts = orderedProducts;
+
+
 
 
 
@@ -110,6 +130,14 @@ public static class Order
                     return;
                 }
             }
+            // Sparar leverantörens namn i orderobjektet.
+            newOrder.SupplierName = supplierName;
+
+            // Lägger till den nya ordern i listan med alla order.
+            appData.Orders.Add(newOrder);
+
+            // Sparar all data och den den nya ordern i data.json.
+            dataStorage.Save(appData);
 
 
 
@@ -155,13 +183,134 @@ public static class Order
         }
 
         
+
+
     public static void AddOutgoingOrder()
     {
         CreateOrder("Outgoing Order");
     }
 
+
+
+
     public static void AddIncomingOrder()
     {
         CreateOrder("Incoming Order");
     }
+
+
+
+
+
+
+
+    // Metod för att uppdatera statusen på en befintlig order.
+    public static void UpdateOrder()
+    {
+        // Hämtar sparad data från JSON-filen.
+        DataStorage dataStorage = new DataStorage();
+        AppData appData = dataStorage.Load();
+
+
+        Console.Write("Enter order number: ");
+
+        if (!int.TryParse(Console.ReadLine(), out int orderNumber))
+        {
+            Console.WriteLine("Invalid order number.");
+            return;
+        }
+
+
+
+        // Söker efter en order som matchar det inskrivna ordernumret.
+        // FirstOrDefault letar efter den order som matchar ordernumret.
+        OrderDetails? orderToUpdate = appData.Orders.FirstOrDefault(order => order.OrderNumber == orderNumber);
+
+        // Kontrollerar om ordern finns.
+        if (orderToUpdate == null)
+        {
+            Console.WriteLine("Order not found.");
+            return;
+        }
+
+        Console.WriteLine($"Order found! Current status: {orderToUpdate.OrderStatus}");
+
+
+
+        // Skapar en lista med tillåtna statusändringar.
+        List<string> availableStatuses = new();
+
+        // Kontrollerar orderns nuvarande status.
+        switch (orderToUpdate.OrderStatus)
+        {
+            case "Packing":
+            availableStatuses.Add("Shipped");
+            availableStatuses.Add("Cancelled");
+            break;
+
+            case "Shipped":
+                availableStatuses.Add("Delivered");
+                break;
+
+            case "Delivered":
+                Console.WriteLine("This order cannot be updated anymore.");
+                return;
+
+            case "Cancelled":
+                 Console.WriteLine("This order cannot be updated anymore.");
+                return;
+        }
+
+        // Visar en meny med de statusar som är tillåtna.
+        // new SelectionPrompt<string>() Skapar en meny där användaren kan välja ett alternativ.
+        // .Title sätter titeln på menyn.
+        // .AddChoices(availableStatuses) Lägger till alternativen från listan availableStatuses i menyn.
+        string newStatus = AnsiConsole.Prompt(new SelectionPrompt<string>().Title("Choose a new order status:").AddChoices(availableStatuses));
+
+        // Uppdaterar orderns status med valt alternativ.
+        orderToUpdate.OrderStatus = newStatus;
+
+        Console.WriteLine($"Order status updated to: {newStatus}");
+
+        // Sparar den uppdaterade ordern i JSON-filen.
+        dataStorage.Save(appData);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+namespace Assignment_Group_Project.Scripts.Objects
+{
+// Representerar en enskild order.
+public class OrderDetails
+{
+    // Orderns unika nummer.
+    public int OrderNumber { get; set; }
+
+    // Orderns nuvarande status.
+    public string OrderStatus { get; set; } = "Packing";
+
+    // Datum då ordern skapades.
+    public DateTime OrderDate { get; set; }
+
+    // Datum då ordern togs emot.
+    public DateTime? OrderReceivedDate { get; set; }
+
+    // Leverantörens namn.
+    public string? SupplierName { get; set; }
+
+    // Produkterna som ingår i ordern.
+    public List<Product> OrderedProducts { get; set; } = new();
+}
 }
