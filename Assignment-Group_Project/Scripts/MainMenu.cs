@@ -1,11 +1,52 @@
-﻿using System;
+﻿using Spectre.Console;
+using System;
 using System.Collections.Generic;
+using Assignment_Group_Project.Scripts.Utilities;
 using System.Text;
 
 namespace Assignment_Group_Project.Scripts
 {
-    public class MainMenu
+    static class MainMenu
     {
-        
+        // Variables!
+        static bool runProgram = true;
+
+        //Create and Run main menu! -<This is currently only a placeholder for the main menu>!
+        public static void RunMenu()
+        {
+            while (runProgram == true)
+            {
+
+                AnsiConsole.MarkupLine("[blue]Product Manager System[/]");
+                User.inputChoice = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                    .Title("Select an option:")
+                    .AddChoices(new[]
+                    {
+                    "Storage",
+                    "Orders",
+                    "End Program",
+                    }));
+
+
+                switch (User.inputChoice)
+                {
+
+                    case "Storage":
+
+                        break;
+
+                    case "Orders":
+
+                        break;
+                    case "End Program":
+                        runProgram = false;
+                        break;
+                    default:
+                        AnsiConsole.MarkupLine("[red]Invalid choice. Please try again.[/]");
+                        break;
+
+                }
+            }
+        }
     }
 }
