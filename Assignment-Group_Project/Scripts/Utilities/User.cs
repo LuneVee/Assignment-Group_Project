@@ -12,6 +12,7 @@ namespace Assignment_Group_Project.Scripts.Utilities
         public static string? input { get; set; }
         public static string? inputChoice { get; set; }
         public static int inputInt;
+        public static decimal inputDecimal;
 
 
         //Read ``string´´ Input!
@@ -43,6 +44,21 @@ namespace Assignment_Group_Project.Scripts.Utilities
 
             inputInt = int.Parse(Num);                                           //Input is able to become a int variable. Set Num as int_Input!
 
+        }
+
+
+
+        //Read ``decimal´´ Input!
+        public static void ReadInputDecimal()                                 //Start method to read User Input and check if it can be used as a decimal variable!
+        {
+            //Check if the user has entered a decimal number!
+            string Num = Console.ReadLine();                                        //Read what User entered and set it as Num!
+            while (!decimal.TryParse(Num, out inputDecimal))                        //While loop if the Input is not able to convert into a decimal number!
+            {
+                Console.WriteLine("Invalied Input. Need to be a decimal number!");  //If Num is not a decimal number or have entered other then number characters, print this text!
+                Num = Console.ReadLine();                                           //Ask the User to enter a new Input!
+            }
+            inputDecimal = decimal.Parse(Num);                                      //Input is able to become a decimal variable. Set Num as decimal_Input!
         }
 
         //Ask User to between Yes or No with a selection prompt!
