@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Spectre.Console;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -40,9 +41,32 @@ namespace Assignment_Group_Project.Scripts.Utilities
                 Num = Console.ReadLine();                                        //Ask the User to enter a new Input!
             }
 
-            inputInt = int.Parse(Num);                                          //Input is able to become a int variable. Set Num as int_Input!
+            inputInt = int.Parse(Num);                                           //Input is able to become a int variable. Set Num as int_Input!
 
         }
+
+        //Ask User to between Yes or No with a selection prompt!
+        public static void AskYesOrNo()
+        {
+            //Create a selection prompt for the user to choose between "Yes" and "No"
+            var YesNo = AnsiConsole.Prompt(new SelectionPrompt<string>()
+                .AddChoices("Yes", "No"));                                      //Add choices to YesNo selection prompt.
+
+            switch (YesNo)                                                      //Read what the User has selected with selection prompt!
+            {
+                case "Yes":                                                     //If the User has selected "Yes" set User InputChoice to "Yes"!
+                    inputChoice = "Yes";
+                    break;
+
+                case "No":                                                      //If the User has selected "No" set User InputChoice to "No"!
+                    inputChoice = "No";
+                    break;
+
+            }
+
+        }
+
+
 
 
 
