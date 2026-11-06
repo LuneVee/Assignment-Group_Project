@@ -47,9 +47,11 @@ namespace Assignment_Group_Project.Scripts
 
                 }
             }
+            Order.CheckOrders();
             Order.UpdateOrder();
             Order.AddOutgoingOrder();
             Order.AddIncomingOrder();}
+            
 
     }
 }
