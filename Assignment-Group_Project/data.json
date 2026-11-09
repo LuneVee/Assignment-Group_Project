@@ -20,7 +20,7 @@
     },
     {
       "OrderNumber": 58385,
-      "OrderStatus": "Packing",
+      "OrderStatus": "Cancelled",
       "OrderDate": "2026-11-04T16:23:12.1128161+01:00",
       "OrderReceivedDate": null,
       "SupplierName": null,
@@ -109,26 +109,8 @@
       ]
     },
     {
-      "OrderNumber": 32998,
-      "OrderStatus": "Packing",
-      "OrderDate": "2026-11-06T12:00:34.6753946+01:00",
-      "OrderReceivedDate": null,
-      "SupplierName": "",
-      "OrderType": "Outgoing Order",
-      "OrderedProducts": [
-        {
-          "ProductArticleNumber": 0,
-          "ProductName": "kiwi",
-          "ProductPrice": 17,
-          "ProductStockQuantity": 56,
-          "SupplierName": null,
-          "AddOrderDate": "0001-01-01T00:00:00"
-        }
-      ]
-    },
-    {
       "OrderNumber": 58900,
-      "OrderStatus": "Packing",
+      "OrderStatus": "Shipped",
       "OrderDate": "2026-11-06T12:00:46.0844434+01:00",
       "OrderReceivedDate": null,
       "SupplierName": "hemk\u00F6p",
@@ -195,6 +177,24 @@
           "ProductName": "tennisracket",
           "ProductPrice": 500,
           "ProductStockQuantity": 3,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00"
+        }
+      ]
+    },
+    {
+      "OrderNumber": 32998,
+      "OrderStatus": "Shipped",
+      "OrderDate": "2026-11-06T12:00:34.6753946+01:00",
+      "OrderReceivedDate": null,
+      "SupplierName": "",
+      "OrderType": "Outgoing Order",
+      "OrderedProducts": [
+        {
+          "ProductArticleNumber": 0,
+          "ProductName": "kiwi",
+          "ProductPrice": 17,
+          "ProductStockQuantity": 56,
           "SupplierName": null,
           "AddOrderDate": "0001-01-01T00:00:00"
         }
