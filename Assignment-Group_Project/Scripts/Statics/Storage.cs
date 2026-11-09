@@ -29,7 +29,7 @@ namespace Assignment_Group_Project.Scripts.Statics
         //Storage Menu version 0.1
         public static void StorageMenu()
         {
-            var StorageMenu = AnsiConsole.Prompt(new SelectionPrompt<string>().AddChoices("Search Product", "Add Product to Storage List", "Back to Main Menu"));
+            var StorageMenu = AnsiConsole.Prompt(new SelectionPrompt<string>().AddChoices("Search Product", "Add Product to Storage List", "Remove Product from Storage List", "Back to Main Menu"));
 
             switch (StorageMenu)
             {
@@ -41,14 +41,17 @@ namespace Assignment_Group_Project.Scripts.Statics
                     AddProductToStorage();
                     break;
 
-                case "Back to Main Menu":
+                case "Remove Product from Storage List":
+                    RemoveProductFromStorage();
+                    break;
 
+                case "Back to Main Menu":
+                    MainMenu.RunMenu();
                     break;
 
             }
 
-        }
-
+        }//Back To Main Menu = Finished Running Task!
 
 
         //Create Product version 0.1
@@ -189,7 +192,8 @@ namespace Assignment_Group_Project.Scripts.Statics
 
             }
 
-        }
+        }//Finished Running Task!
+
 
         //Test Update Product In Storage version 0.1
         public static void UpdateProductInStorage()
@@ -202,11 +206,80 @@ namespace Assignment_Group_Project.Scripts.Statics
             string UpdateOptions = AnsiConsole.Prompt(new SelectionPrompt<string>().AddChoices(choices));
 
 
-        }
+        }//Finished Running Task!
 
 
         //Test Remove Product From Storage version 0.1
+        public static void RemoveProductFromStorage()
+        {
 
+            AnsiConsole.MarkupLine                                                                              //Display a message to the user asking which product they would like to remove!
+                ("[blue]What Product Would You Like To Remove?[/]");
+
+            // Create a list of product names for the selection prompt!
+            List<string> choices = new List<string>();
+
+            choices.Add("Search:");                                                                             //Add "Search" as the first option to the list of choices!
+            foreach (var product in ProductList)                                                                   //Loop through each product in the Products list and add its name to the choices list!
+            {
+                if (product != null)                                                                            //Check if the product is not null before adding its name to the choices list!
+                {
+                    choices.Add(product.ProductName);                                                           //Add the product name to the choices list!
+                }
+            }
+            choices.Add("Back To Main Menu");                                                                   //Add "Back To Main Menu" as the last option to the list of choices!
+
+
+            //Create a selection prompt for the user to choose a product to remove!
+            var ChoosenProduct = AnsiConsole
+                .Prompt(new SelectionPrompt<string>()
+                .AddChoices(choices));                                                                          //Add the choices list to the selection prompt!
+
+            if (ChoosenProduct == "Back To Main Menu")                                                          //Check if the user chose "Back To Main Menu"!
+            {
+                return;                                                                                         //If the user chose "Back To Main Menu", exit the method and return to the main menu!
+
+            }
+            else
+            {
+                Product productToRemove = ProductList.Find(item => item.ProductName == ChoosenProduct);            //Find the product in the Products list that matches the chosen product name!
+                if (productToRemove != null)                                                                    //Check if the product to remove is not null!
+                {
+                    AnsiConsole.MarkupLine                                                                      //Ask the user for confirmation before removing the product!
+                        ($"[blue]Are you sure you want to remove '{productToRemove.ProductName}' from storage?[/]");
+
+                    User.AskYesOrNo();                                                                          //Call the AskYesOrNo method to get the user's confirmation!
+
+                    switch (User.inputChoice)                                                                   //Check the user's confirmation choice!
+                    {
+                        //If the user confirms the removal, remove the product from the Products list and display a success message!
+                        case "Yes":
+
+                            ProductList.Remove(productToRemove);                                                   //Remove the product from the Products list!
+                            AnsiConsole.MarkupLine                                                              //Display a success message to the user!
+                                ($"[green]Product '{productToRemove.ProductName}' removed successfully![/]");
+                            Console.ReadKey();                                                                  //Wait for the user to press a key before continuing!
+                            break;                                                                              //Exit the switch statement after removing the product!
+
+                        //If the user cancels the removal, display a cancellation message and return to the main menu!
+                        case "No":
+                            AnsiConsole.MarkupLine                                                              //Display a message to the user indicating that the removal process has been cancelled!
+                                ("[yellow]Product removal cancelled.[/]");
+                            Console.ReadKey();                                                                  //Wait for the user to press a key before continuing!
+                            return;                                                                             //Exit the method and return to the main menu!
+                    }
+
+                }
+                //If the product to remove is null, display an error message to the user!
+                else
+                {
+                    AnsiConsole.MarkupLine                                                                      //If the product to remove is null, display an error message to the user!
+                        ("[red]Product not found![/]");
+                    Console.ReadKey();                                                                          //Wait for the user to press a key before continuing!
+                }
+
+            }
+        }//Finished Running Task!
 
 
         // Test Search in Storage Function version 0.1
@@ -332,7 +405,8 @@ namespace Assignment_Group_Project.Scripts.Statics
                 case "Exit Program":
                     return;
             }
-        }
+        }//Finished Running Task!
+
 
     }
 }
