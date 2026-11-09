@@ -1,0 +1,206 @@
+{
+  "Orders": [
+    {
+      "OrderNumber": 21565,
+      "OrderStatus": "Packing",
+      "OrderDate": "2026-11-04T16:22:37.8905126+01:00",
+      "OrderReceivedDate": null,
+      "SupplierName": null,
+      "OrderType": null,
+      "OrderedProducts": [
+        {
+          "ProductArticleNumber": 0,
+          "ProductName": "bord",
+          "ProductPrice": 250,
+          "ProductStockQuantity": 5,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00"
+        }
+      ]
+    },
+    {
+      "OrderNumber": 58385,
+      "OrderStatus": "Packing",
+      "OrderDate": "2026-11-04T16:23:12.1128161+01:00",
+      "OrderReceivedDate": null,
+      "SupplierName": null,
+      "OrderType": null,
+      "OrderedProducts": [
+        {
+          "ProductArticleNumber": 0,
+          "ProductName": "stol",
+          "ProductPrice": 100,
+          "ProductStockQuantity": 20,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00"
+        }
+      ]
+    },
+    {
+      "OrderNumber": 27575,
+      "OrderStatus": "Cancelled",
+      "OrderDate": "2026-11-04T16:29:28.8929389+01:00",
+      "OrderReceivedDate": null,
+      "SupplierName": null,
+      "OrderType": null,
+      "OrderedProducts": [
+        {
+          "ProductArticleNumber": 0,
+          "ProductName": "tandbortse",
+          "ProductPrice": 20,
+          "ProductStockQuantity": 5,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00"
+        }
+      ]
+    },
+    {
+      "OrderNumber": 48907,
+      "OrderStatus": "Shipped",
+      "OrderDate": "2026-11-04T16:29:41.4718365+01:00",
+      "OrderReceivedDate": null,
+      "SupplierName": null,
+      "OrderType": null,
+      "OrderedProducts": [
+        {
+          "ProductArticleNumber": 0,
+          "ProductName": "tandborste",
+          "ProductPrice": 15,
+          "ProductStockQuantity": 100,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00"
+        }
+      ]
+    },
+    {
+      "OrderNumber": 87891,
+      "OrderStatus": "Cancelled",
+      "OrderDate": "2026-11-05T21:42:50.3583095+01:00",
+      "OrderReceivedDate": null,
+      "SupplierName": "",
+      "OrderType": "Outgoing Order",
+      "OrderedProducts": [
+        {
+          "ProductArticleNumber": 0,
+          "ProductName": "fotboll",
+          "ProductPrice": 50,
+          "ProductStockQuantity": 5,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00"
+        }
+      ]
+    },
+    {
+      "OrderNumber": 36852,
+      "OrderStatus": "Packing",
+      "OrderDate": "2026-11-06T11:57:38.7733027+01:00",
+      "OrderReceivedDate": null,
+      "SupplierName": "",
+      "OrderType": "Outgoing Order",
+      "OrderedProducts": [
+        {
+          "ProductArticleNumber": 0,
+          "ProductName": "\u00E4pple",
+          "ProductPrice": 13,
+          "ProductStockQuantity": 25,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00"
+        }
+      ]
+    },
+    {
+      "OrderNumber": 32998,
+      "OrderStatus": "Packing",
+      "OrderDate": "2026-11-06T12:00:34.6753946+01:00",
+      "OrderReceivedDate": null,
+      "SupplierName": "",
+      "OrderType": "Outgoing Order",
+      "OrderedProducts": [
+        {
+          "ProductArticleNumber": 0,
+          "ProductName": "kiwi",
+          "ProductPrice": 17,
+          "ProductStockQuantity": 56,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00"
+        }
+      ]
+    },
+    {
+      "OrderNumber": 58900,
+      "OrderStatus": "Packing",
+      "OrderDate": "2026-11-06T12:00:46.0844434+01:00",
+      "OrderReceivedDate": null,
+      "SupplierName": "hemk\u00F6p",
+      "OrderType": "Incoming Order",
+      "OrderedProducts": [
+        {
+          "ProductArticleNumber": 0,
+          "ProductName": "kiwi",
+          "ProductPrice": 17.7,
+          "ProductStockQuantity": 44,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00"
+        }
+      ]
+    },
+    {
+      "OrderNumber": 78772,
+      "OrderStatus": "Packing",
+      "OrderDate": "2026-11-06T12:12:29.4861949+01:00",
+      "OrderReceivedDate": null,
+      "SupplierName": "",
+      "OrderType": "Outgoing Order",
+      "OrderedProducts": [
+        {
+          "ProductArticleNumber": 0,
+          "ProductName": "persika",
+          "ProductPrice": 13,
+          "ProductStockQuantity": 55,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00"
+        }
+      ]
+    },
+    {
+      "OrderNumber": 55591,
+      "OrderStatus": "Packing",
+      "OrderDate": "2026-11-06T12:12:49.1121794+01:00",
+      "OrderReceivedDate": null,
+      "SupplierName": "hemk\u00F6p",
+      "OrderType": "Incoming Order",
+      "OrderedProducts": [
+        {
+          "ProductArticleNumber": 0,
+          "ProductName": "nektarin",
+          "ProductPrice": 14,
+          "ProductStockQuantity": 34,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00"
+        }
+      ]
+    }
+  ],
+  "OrderHistory": [
+    {
+      "OrderNumber": 73636,
+      "OrderStatus": "Delivered",
+      "OrderDate": "2026-11-05T21:43:07.3005777+01:00",
+      "OrderReceivedDate": "2026-11-06T12:15:48.7406279+01:00",
+      "SupplierName": "tennis company",
+      "OrderType": "Incoming Order",
+      "OrderedProducts": [
+        {
+          "ProductArticleNumber": 0,
+          "ProductName": "tennisracket",
+          "ProductPrice": 500,
+          "ProductStockQuantity": 3,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00"
+        }
+      ]
+    }
+  ],
+  "Products": [],
+  "Suppliers": []
+}
