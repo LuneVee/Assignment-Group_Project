@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Assignment_Group_Project.Scripts.Utilities;
 using System.Text;
+using Assignment_Group_Project.Scripts.Statics;
 
 namespace Assignment_Group_Project.Scripts
 {
@@ -20,23 +21,18 @@ namespace Assignment_Group_Project.Scripts
                 AnsiConsole.MarkupLine("[blue]Product Manager System[/]");
                 User.inputChoice = AnsiConsole.Prompt(new SelectionPrompt<string>()
                     .Title("Select an option:")
-                    .AddChoices(new[]
-                    {
-                    "Storage",
-                    "Orders",
-                    "End Program",
-                    }));
+                    .AddChoices(new[] { "Storage", "Orders", "End Program",}));
 
 
                 switch (User.inputChoice)
                 {
 
                     case "Storage":
-
+                        Storage.StorageMenu();
                         break;
 
                     case "Orders":
-
+                        
                         break;
                     case "End Program":
                         runProgram = false;
