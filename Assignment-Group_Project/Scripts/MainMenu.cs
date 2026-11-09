@@ -32,7 +32,7 @@ namespace Assignment_Group_Project.Scripts
                         break;
 
                     case "Orders":
-                        
+                    Order.OrderMenu();
                         break;
                     case "End Program":
                         runProgram = false;
@@ -43,9 +43,6 @@ namespace Assignment_Group_Project.Scripts
 
                 }
             }
-            Order.UpdateOrder();
-            Order.AddOutgoingOrder();
-            Order.AddIncomingOrder();}
-
+        }
     }
 }

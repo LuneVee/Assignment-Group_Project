@@ -39,7 +39,7 @@ public static class Order
             OrderType = orderType,
         };
 
-        Console.WriteLine("Starting Order.");
+        Console.WriteLine($"Starting {orderType}.");
 
         bool addingMoreProducts = true;
 
@@ -470,7 +470,7 @@ public static class Order
         //.AddChoices(selectedOrders) lägger till alla order i den filtrerade listan som valbara alternativ.
         .AddChoices(selectedOrdersList));
 
-
+        Console.Clear();
         // Visar detaljer för den valda ordern.
         Console.WriteLine("-----------------------------------");
         Console.WriteLine($"Order Number: {selectedOrder.OrderNumber}");
@@ -524,9 +524,7 @@ public static class Order
         // Användaren ska alltid kunna gå tillbaka.
         choices.Add("Go Back");
 
-        string choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
-            .Title("What would you like to do?")
-            .AddChoices(choices));
+        string choice = AnsiConsole.Prompt(new SelectionPrompt<string>().AddChoices(choices));
 
         switch (choice)
         {
@@ -554,6 +552,67 @@ public static class Order
 
             case "Go Back":
             return;
+        }
+    }
+
+
+
+
+
+
+
+
+
+    public static void OrderMenu()
+    {
+        bool orderMenuIsRunning = true;
+
+        while (orderMenuIsRunning)
+        {
+            Console.Clear();
+
+            string choice = AnsiConsole.Prompt(new SelectionPrompt<string>().Title("Order Menu")
+                    .AddChoices(
+                        "Check Orders",
+                        // "Check Order History", // Bonus, implementeras senare
+                        "Add Outgoing Order",
+                        "Add Incoming Order",
+                        "Update Order",
+                        "Back To Main Menu"
+                    ));
+
+            switch (choice)
+            {
+                case "Check Orders":
+                    CheckOrders();
+                    break;
+
+                // case "Check Order History":
+                //     CheckOrderHistory();
+                //     break;
+
+                case "Add Outgoing Order":
+                    AddOutgoingOrder();
+                    break;
+
+                case "Add Incoming Order":
+                    AddIncomingOrder();
+                    break;
+
+                case "Update Order":
+                    UpdateOrder();
+                    break;
+
+                case "Back To Main Menu":
+                    orderMenuIsRunning = false;
+                    break;
+            }
+
+            if (orderMenuIsRunning)
+            {
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+            }
         }
     }
 }
