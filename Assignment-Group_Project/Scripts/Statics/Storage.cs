@@ -29,7 +29,9 @@ namespace Assignment_Group_Project.Scripts.Statics
         //Storage Menu version 0.1
         public static void StorageMenu()
         {
-            var StorageMenu = AnsiConsole.Prompt(new SelectionPrompt<string>().AddChoices("Search Product", "Add Product to Storage List", "Remove Product from Storage List", "Back to Main Menu"));
+            var StorageMenu = AnsiConsole
+                .Prompt(new SelectionPrompt<string>()
+                .AddChoices("Search Product", "Add Product to Storage List", "Update Product In Storage", "Remove Product from Storage List", "Back to Main Menu"));
 
             switch (StorageMenu)
             {
@@ -39,6 +41,10 @@ namespace Assignment_Group_Project.Scripts.Statics
 
                 case "Add Product to Storage List":
                     AddProductToStorage();
+                    break;
+
+                case "Update Product In Storage":
+                    UpdateProductInStorage();
                     break;
 
                 case "Remove Product from Storage List":
@@ -201,9 +207,48 @@ namespace Assignment_Group_Project.Scripts.Statics
 
             AnsiConsole.MarkupLine("[blue]What Product Would You Like To Update?[/]");
             List<string> choices = new List<string>();
+            choices.Add("Search: ");
             choices = ProductList.FindAll(item => item != null).Select(item => item.ProductName).ToList();
+            choices.Add("Back to Storage Menu");
 
             string UpdateOptions = AnsiConsole.Prompt(new SelectionPrompt<string>().AddChoices(choices));
+
+            if (UpdateOptions == "Back to Storage Menu")
+            {
+                StorageMenu();
+            }
+            else
+            {
+                Product productToUpdate = ProductList.Find(item => item.ProductName == UpdateOptions);
+
+                if (productToUpdate != null)
+                {
+                    AnsiConsole.MarkupLine($"[blue]Updating Product: {productToUpdate.ProductName}[/]");
+                    Console.WriteLine("Enter new values (leave blank to keep current value):");
+                    
+                    Console.Write($"Product Name ({productToUpdate.ProductName}): ");
+                    User.ReadInput();  
+                    productToUpdate.ProductName = User.input;
+
+                    Console.Write($"Product Price ({productToUpdate.ProductPrice}): ");
+                    User.ReadInputDecimal();
+                    productToUpdate.ProductPrice = User.inputDecimal;
+
+                    Console.Write($"Product Stock Quantity ({productToUpdate.ProductStockQuantity}): "); 
+                    User.ReadInputInt();
+                    productToUpdate.ProductStockQuantity = User.inputInt;
+
+                    Console.Write($"Product Supplier Name ({productToUpdate.SupplierName}): ");
+                    User.ReadInput();
+                    productToUpdate.SupplierName = User.input;
+
+                    AnsiConsole.MarkupLine("[green]Product updated successfully![/]");
+                }
+                else
+                {
+                    AnsiConsole.MarkupLine("[red]Product not found![/]");
+                }
+            }
 
 
         }//Finished Running Task!
