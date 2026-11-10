@@ -202,5 +202,11 @@
     }
   ],
   "Products": [],
-  "Suppliers": []
+  "Suppliers": [
+    {
+      "SupplierCompanyName":"tennis company",
+      "Email": "Info@tennis.se",
+      "PhoneNumber": "070-1234567"
+    }
+  ]
 }
