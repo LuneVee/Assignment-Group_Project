@@ -19,7 +19,7 @@ public static class Order
         AppData appData = dataStorage.Load();
 
         // Skapar en lista, den sparar produkterna i ordern.
-        List<Product> orderedProducts = new();
+        List<Product> orderedProductsList = new();
 
 
         // Skapar ett Random objekt som används för att generera ett automatiskt ordernummer.
@@ -39,7 +39,7 @@ public static class Order
             OrderType = orderType,
         };
 
-        Console.WriteLine("Starting Order.");
+        Console.WriteLine($"Starting {orderType}.");
 
         bool addingMoreProducts = true;
 
@@ -86,7 +86,7 @@ public static class Order
 
 
             // Lägger till produkten i orderlistan.
-            orderedProducts.Add(newProduct);
+            orderedProductsList.Add(newProduct);
 
 
             Console.WriteLine("Product added!");
@@ -103,13 +103,13 @@ public static class Order
             }
         }
             // Kopplar produktlistan till orderobjektet.
-            newOrder.OrderedProducts = orderedProducts;
+            newOrder.OrderedProductsList = orderedProductsList;
 
 
 
 
 
-            if (orderedProducts.Count == 0)
+            if (orderedProductsList.Count == 0)
             {
                 Console.WriteLine("Order must contain at least one product.");
                 return;
@@ -143,7 +143,7 @@ public static class Order
 
 
             // Räknar ut totalsumman för hela ordern.
-            decimal totalOrderPrice = orderedProducts.Sum(product => product.ProductPrice * product.ProductStockQuantity);
+            decimal totalOrderPrice = orderedProductsList.Sum(product => product.ProductPrice * product.ProductStockQuantity);
 
 
 
@@ -162,7 +162,7 @@ public static class Order
 
             
 
-            foreach (Product product in orderedProducts)
+            foreach (Product product in orderedProductsList)
             {
                 Console.WriteLine($"Product: {product.ProductName}");
                 Console.WriteLine($"Amount: {product.ProductStockQuantity}");
@@ -207,28 +207,79 @@ public static class Order
         DataStorage dataStorage = new DataStorage();
         AppData appData = dataStorage.Load();
 
+        // Hämtar alla aktiva ordrar, både Incoming och Outgoing.
+        List<OrderDetails> allOrdersList = appData.Orders;
 
-        Console.Write("Enter order number: ");
-
-        if (!int.TryParse(Console.ReadLine(), out int orderNumber))
+        // Kontrollerar om det finns några aktiva ordrar.
+        if (allOrdersList.Count == 0)
         {
-            Console.WriteLine("Invalid order number.");
+            Console.WriteLine("No orders found.");
             return;
         }
 
+        // Bestämmer hur många ordrar som ska visas per sida.
+        int pageSize = 10;
 
+        // Håller reda på vilken sida användaren befinner sig på.
+        int currentPage = 0;
 
-        // Söker efter en order som matchar det inskrivna ordernumret.
-        // FirstOrDefault letar efter den order som matchar ordernumret.
-        OrderDetails? orderToUpdate = appData.Orders.FirstOrDefault(order => order.OrderNumber == orderNumber);
+        // Variabel som sparar den order användaren väljer.
+        OrderDetails? orderToUpdate = null;
 
-        // Kontrollerar om ordern finns.
-        if (orderToUpdate == null)
+        // Fortsätter visa sidor tills användaren har valt en order.
+        while (orderToUpdate == null)
         {
-            Console.WriteLine("Order not found.");
-            return;
+            // Räknar ut hur många ordrar som ska hoppas över.
+            int startIndex = currentPage * pageSize;
+
+            // Hämtar max 10 ordrar för den aktuella sidan.
+            List<OrderDetails> pageOrders = allOrdersList.Skip(startIndex).Take(pageSize).ToList();
+
+            // Skapar menyval för sidan.
+            List<string> choices = pageOrders.Select(order => $"Order #{order.OrderNumber} - {order.OrderType} - {order.OrderStatus}").ToList();
+
+            choices.Add("Go Back");
+
+            // Lägger till navigeringsalternativ om det finns fler sidor.
+            if (currentPage > 0)
+            {
+                choices.Add("Previous page");
+            }
+
+            if (startIndex + pageSize < allOrdersList.Count)
+            {
+                choices.Add("Next page");
+            }
+
+            // Visar ordrarna och navigeringsalternativen.
+            string selectedChoice = AnsiConsole.Prompt(new SelectionPrompt<string>()
+            .Title($"Choose an order (Page {currentPage + 1}):")
+            .AddChoices(choices));
+
+
+            if (selectedChoice == "Next page")
+            {
+                currentPage++;
+            }
+
+            else if (selectedChoice == "Previous page")
+            {
+                currentPage--;
+            }
+
+            else if (selectedChoice == "Go Back")
+            {
+                return;
+            }
+
+            else
+            {
+                int selectedIndex = choices.IndexOf(selectedChoice);
+                orderToUpdate = pageOrders[selectedIndex];
+            }
         }
 
+        // Visar vilken order användaren har valt.
         Console.WriteLine($"Order found, Current status: {orderToUpdate.OrderStatus}");
 
 
@@ -250,21 +301,100 @@ public static class Order
 
             case "Delivered":
             case "Cancelled":
-                Console.WriteLine("This order cannot be updated anymore.");
+                // Dessa ordrar kan inte få en ny status men användaren ska fortfarande kunna ta bort dem.
+            break;
+        }
+
+        // Lägger till möjligheten att ta bort ordern eller gå tillbaka.
+        availableStatuses.Add("Delete Order");
+        availableStatuses.Add("Register Supplier Confirmation");
+        availableStatuses.Add("Go Back");
+
+        // Visar menyn med statusändringar och borttagning.
+        string selectedOption = AnsiConsole.Prompt(
+        new SelectionPrompt<string>().Title("Choose what you want to do:").AddChoices(availableStatuses));
+
+
+        if (selectedOption == "Go Back")
+        {
             return;
         }
 
-        // Visar en meny med de statusar som är tillåtna.
-        // new SelectionPrompt<string>() Skapar en meny där användaren kan välja ett alternativ.
-        // .Title sätter titeln på menyn.
-        // .AddChoices(availableStatuses) Lägger till alternativen från listan availableStatuses i menyn.
-        string newStatus = AnsiConsole.Prompt(new SelectionPrompt<string>().Title("Choose a new order status:").AddChoices(availableStatuses));
+
+
+        // Kontrollerar om användaren vill registrera en leverantörsbekräftelse.
+        if (selectedOption == "Register Supplier Confirmation")
+        {
+            // Kontrollerar att det är en Incoming Order.
+            if (orderToUpdate.OrderType != "Incoming Order")
+            {
+                Console.WriteLine("Supplier confirmation is only available for incoming orders.");
+                return;
+            }
+
+            // Kontrollerar om ordern redan har blivit bekräftad.
+            if (orderToUpdate.SupplierConfirmed)
+            {
+                Console.WriteLine("This order has already been confirmed.");
+                return;
+            }
+
+            Console.WriteLine("Have you received an order confirmation from the supplier?");
+
+            // Frågar användaren om bekräftelsen har mottagits.
+            User.AskYesOrNo();
+
+            if (User.inputChoice == "Yes")
+            {
+                // Registrerar att leverantören har bekräftat ordern.
+                orderToUpdate.SupplierConfirmed = true;
+
+                // Sparar ändringen i JSON-filen.
+                dataStorage.Save(appData);
+
+                Console.WriteLine("Supplier confirmation successfully registered!");
+            }
+            else
+            {
+                Console.WriteLine("No changes were made.");
+            }
+
+            return;
+        }
+
+
+
+        // Kontrollerar om användaren har valt att ta bort ordern.
+        if (selectedOption == "Delete Order")
+        {
+            Console.WriteLine($"Are you sure you want to delete order #{orderToUpdate.OrderNumber}?");
+
+            // Frågar användaren om borttagningen ska bekräftas.
+            User.AskYesOrNo();
+
+            if (User.inputChoice == "Yes")
+            {
+                // Flyttar ordern från aktiva ordrar till orderhistoriken.
+                appData.Orders.Remove(orderToUpdate);
+                appData.OrderHistory.Add(orderToUpdate);
+
+                // Sparar ändringarna.
+                dataStorage.Save(appData);
+
+                Console.WriteLine("Order successfully deleted & moved to order history!");
+            }
+            else
+            {
+                Console.WriteLine("Order was not deleted.");
+            }
+            return;
+        }
 
         // Uppdaterar orderns status.
-        orderToUpdate.OrderStatus = newStatus;
+        orderToUpdate.OrderStatus = selectedOption;
 
         // Om ordern har statusen deliverd flyttas den till historik listan.
-        if (newStatus == "Delivered")
+        if (selectedOption == "Delivered")
         {
             orderToUpdate.OrderReceivedDate = DateTime.Now;
 
@@ -275,7 +405,7 @@ public static class Order
         }
         else
         {
-            Console.WriteLine($"Order status updated to: {newStatus}");
+            Console.WriteLine($"Order status updated to: {selectedOption}");
         }
 
         // Sparar ändringarna i JSON-filen.
@@ -312,11 +442,11 @@ public static class Order
 
         // Filtrerar orderlistan utifrån användarens val.
         // säger att den ska gå igenom alla order i appData.Orders och kolla om order.OrderType == selectedOrderType.
-        List<OrderDetails> selectedOrders = appData.Orders.Where(order => order.OrderType == selectedOrderType).ToList();
+        List<OrderDetails> selectedOrdersList = appData.Orders.Where(order => order.OrderType == selectedOrderType).ToList();
 
 
         // Kontrollerar om det finns order av den valda typen.
-        if (selectedOrders.Count == 0)
+        if (selectedOrdersList.Count == 0)
         {
             Console.WriteLine("No orders found for this order type.");
             return;
@@ -324,7 +454,7 @@ public static class Order
 
 
         // Visar alla order av den valda typen.
-        foreach (OrderDetails order in selectedOrders)
+        foreach (OrderDetails order in selectedOrdersList)
         {
             Console.WriteLine($"Order Number: {order.OrderNumber}");
             Console.WriteLine($"Order Status: {order.OrderStatus}");
@@ -338,9 +468,9 @@ public static class Order
         //.UseConverter bestämmer hur varje order ska visas i menyn. Här visas ordernummer och status.
         .UseConverter(order => $"Order #{order.OrderNumber} - {order.OrderStatus}")
         //.AddChoices(selectedOrders) lägger till alla order i den filtrerade listan som valbara alternativ.
-        .AddChoices(selectedOrders));
+        .AddChoices(selectedOrdersList));
 
-
+        Console.Clear();
         // Visar detaljer för den valda ordern.
         Console.WriteLine("-----------------------------------");
         Console.WriteLine($"Order Number: {selectedOrder.OrderNumber}");
@@ -348,14 +478,32 @@ public static class Order
         Console.WriteLine($"Order Status: {selectedOrder.OrderStatus}");
         Console.WriteLine($"Order Date: {selectedOrder.OrderDate:yyyy-MM-dd HH:mm}");
 
+        // Visar leveranstörens namn om det finns.
         if (!string.IsNullOrEmpty(selectedOrder.SupplierName))
         {
             Console.WriteLine($"Supplier: {selectedOrder.SupplierName}");
         }
 
+
+        // Visar om leverantören har bekräftat en Incoming Order.
+        if (selectedOrder.OrderType == "Incoming Order")
+        {
+            if (selectedOrder.SupplierConfirmed)
+            {
+                Console.WriteLine("Supplier Confirmation: Confirmed");
+            }
+            else
+            {
+                Console.WriteLine("Supplier Confirmation: Awaiting confirmation");
+            }
+        }
+
+
+
+
         Console.WriteLine("Ordered Products:");
 
-        foreach (Product product in selectedOrder.OrderedProducts)
+        foreach (Product product in selectedOrder.OrderedProductsList)
         {
             // F2 gör att priset visas med två decimaler.
             Console.WriteLine($" - Product Name: {product.ProductName}, Amount: {product.ProductStockQuantity}, Price per Product: {product.ProductPrice:F2} kr");
@@ -364,9 +512,19 @@ public static class Order
 
 
 
-        string choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
-        .Title("What would you like to do?")
-        .AddChoices("Mark as Delivered", "Go Back"));
+        // Skapa menyvalen som användaren kan välja mellan.
+        List<string> choices = new List<string>();
+
+        // Visa bara Mark as Delivered om ordern har skickats.
+        if (selectedOrder.OrderStatus == "Shipped")
+        {
+            choices.Add("Mark as Delivered");
+        }
+
+        // Användaren ska alltid kunna gå tillbaka.
+        choices.Add("Go Back");
+
+        string choice = AnsiConsole.Prompt(new SelectionPrompt<string>().AddChoices(choices));
 
         switch (choice)
         {
@@ -394,6 +552,67 @@ public static class Order
 
             case "Go Back":
             return;
+        }
+    }
+
+
+
+
+
+
+
+
+
+    public static void OrderMenu()
+    {
+        bool orderMenuIsRunning = true;
+
+        while (orderMenuIsRunning)
+        {
+            Console.Clear();
+
+            string choice = AnsiConsole.Prompt(new SelectionPrompt<string>().Title("Order Menu")
+                    .AddChoices(
+                        "Check Orders",
+                        // "Check Order History", // Bonus, implementeras senare
+                        "Add Outgoing Order",
+                        "Add Incoming Order",
+                        "Update Order",
+                        "Back To Main Menu"
+                    ));
+
+            switch (choice)
+            {
+                case "Check Orders":
+                    CheckOrders();
+                    break;
+
+                // case "Check Order History":
+                //     CheckOrderHistory();
+                //     break;
+
+                case "Add Outgoing Order":
+                    AddOutgoingOrder();
+                    break;
+
+                case "Add Incoming Order":
+                    AddIncomingOrder();
+                    break;
+
+                case "Update Order":
+                    UpdateOrder();
+                    break;
+
+                case "Back To Main Menu":
+                    orderMenuIsRunning = false;
+                    break;
+            }
+
+            if (orderMenuIsRunning)
+            {
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+            }
         }
     }
 }
@@ -431,10 +650,13 @@ public class OrderDetails
     // Leverantörens namn.
     public string? SupplierName { get; set; }
 
+    // Håller reda på om leverantören har bekräftat ordern. False för att det ska vara standard när ordern skapas.
+    public bool SupplierConfirmed { get; set; } = false;
+
     // Typ av order, t.ex "Incoming Order" eller "Outgoing Order".
     public string? OrderType { get; set;}
 
     // Produkterna som ingår i ordern.
-    public List<Product> OrderedProducts { get; set; } = new();
+    public List<Product> OrderedProductsList { get; set; } = new();
 }
 }
