@@ -574,7 +574,7 @@ public static class Order
             string choice = AnsiConsole.Prompt(new SelectionPrompt<string>().Title("Order Menu")
                     .AddChoices(
                         "Check Orders",
-                        // "Check Order History", // Bonus, implementeras senare
+                        "Check Order History",
                         "Add Outgoing Order",
                         "Add Incoming Order",
                         "Update Order",
@@ -587,9 +587,9 @@ public static class Order
                     CheckOrders();
                     break;
 
-                // case "Check Order History":
-                //     CheckOrderHistory();
-                //     break;
+                case "Check Order History":
+                    CheckOrderHistory();
+                    break;
 
                 case "Add Outgoing Order":
                     AddOutgoingOrder();
@@ -614,6 +614,65 @@ public static class Order
                 Console.ReadKey();
             }
         }
+    }
+
+
+
+
+    public static void CheckOrderHistory()
+    {
+        Console.Clear();
+
+        // Hämtar data från json och sparar det i appData.
+        DataStorage dataStorage = new DataStorage();
+        AppData appData = dataStorage.Load();
+
+        // Gör en lista som innehåller alla ordrar i orderhistoriken.
+        List<OrderDetails> orderHistoryList = appData.OrderHistory;
+
+        // Kontrollera om det finns några tidigare ordrar.
+        if (orderHistoryList.Count == 0)
+        {
+            Console.WriteLine("No orders found in order history.");
+            return;
+        }
+
+
+        // Låter användaren välja vilken order den vill titta mer på.
+        OrderDetails selectedOrder = AnsiConsole.Prompt(new SelectionPrompt<OrderDetails>()
+            .Title("Choose an order:")
+            //UseConverter bestämmer hur varje order ska visas i menyn. Här visas ordernummer och status.
+            .UseConverter(order => $"Order #{order.OrderNumber} - {order.OrderStatus}")
+            .AddChoices(orderHistoryList));
+
+
+        // Visar mottagningsdatum om det finns.
+        if (selectedOrder.OrderReceivedDate != null)
+        {
+            Console.WriteLine($"Received Date: {selectedOrder.OrderReceivedDate:yyyy-MM-dd HH:mm}");
+        }
+
+        // Visar leverantör om det finns.
+        if (!string.IsNullOrEmpty(selectedOrder.SupplierName))
+        {
+            Console.WriteLine($"Supplier: {selectedOrder.SupplierName}");
+        }
+
+
+        foreach (Product product in selectedOrder.OrderedProductsList)
+        {
+            Console.WriteLine("-----------------------------------");
+            Console.WriteLine($"Order Number: {selectedOrder.OrderNumber}");
+            Console.WriteLine($"Order Type: {selectedOrder.OrderType}");
+            Console.WriteLine($"Order Status: {selectedOrder.OrderStatus}");
+            Console.WriteLine($"Order Date: {selectedOrder.OrderDate:yyyy-MM-dd HH:mm}");
+            Console.WriteLine($"Product Name: {product.ProductName}");
+            Console.WriteLine($"Amount: {product.ProductStockQuantity}");
+            Console.WriteLine($"Price per Product: {product.ProductPrice:F2} kr");
+            Console.WriteLine($"Total: {product.ProductPrice * product.ProductStockQuantity:F2} kr");
+            Console.WriteLine("-----------------------------------");
+        }
+        
     }
 }
 
