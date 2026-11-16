@@ -356,31 +356,9 @@
           "ProductName": "blablabla",
           "ProductPrice": 24,
           "ProductStockQuantity": 5,
-          "OrderAmount": 0,
           "SupplierName": null,
-          "AddOrderDate": "0001-01-01T00:00:00",
-          "tagsList": []
+          "AddOrderDate": "0001-01-01T00:00:00"
         }
-      ]
-    }
-  ],
-  "Products": [
-    {
-      "ProductArticleNumber": 1,
-      "ProductName": "Product 1",
-      "ProductPrice": 10.99,
-      "ProductStockQuantity": 90,
-      "OrderAmount": 0,
-      "SupplierName": "ABC",
-      "AddOrderDate": "0001-01-01T00:00:00",
-      "tagsList": [
-        "blablabla",
-        "tag",
-        "1",
-        "tag",
-        "2",
-        "osv",
-        "da"
       ]
     }
   ],
