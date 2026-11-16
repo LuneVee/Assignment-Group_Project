@@ -54,8 +54,10 @@
           "ProductName": "apelsin",
           "ProductPrice": 19,
           "ProductStockQuantity": 55,
+          "OrderAmount": 0,
           "SupplierName": null,
-          "AddOrderDate": "0001-01-01T00:00:00"
+          "AddOrderDate": "0001-01-01T00:00:00",
+          "tagsList": []
         }
       ]
     },
@@ -73,16 +75,20 @@
           "ProductName": "p\u00E4ron",
           "ProductPrice": 10,
           "ProductStockQuantity": 100,
+          "OrderAmount": 0,
           "SupplierName": null,
-          "AddOrderDate": "0001-01-01T00:00:00"
+          "AddOrderDate": "0001-01-01T00:00:00",
+          "tagsList": []
         },
         {
           "ProductArticleNumber": 0,
           "ProductName": "\u00E4pple",
           "ProductPrice": 9,
           "ProductStockQuantity": 99,
+          "OrderAmount": 0,
           "SupplierName": null,
-          "AddOrderDate": "0001-01-01T00:00:00"
+          "AddOrderDate": "0001-01-01T00:00:00",
+          "tagsList": []
         }
       ]
     },
@@ -100,8 +106,10 @@
           "ProductName": "3",
           "ProductPrice": 5,
           "ProductStockQuantity": 3,
+          "OrderAmount": 0,
           "SupplierName": null,
-          "AddOrderDate": "0001-01-01T00:00:00"
+          "AddOrderDate": "0001-01-01T00:00:00",
+          "tagsList": []
         }
       ]
     },
@@ -119,8 +127,10 @@
           "ProductName": "barnvagn",
           "ProductPrice": 500,
           "ProductStockQuantity": 5,
+          "OrderAmount": 0,
           "SupplierName": null,
-          "AddOrderDate": "0001-01-01T00:00:00"
+          "AddOrderDate": "0001-01-01T00:00:00",
+          "tagsList": []
         }
       ]
     },
@@ -138,16 +148,125 @@
           "ProductName": "godis",
           "ProductPrice": 23,
           "ProductStockQuantity": 10,
+          "OrderAmount": 0,
           "SupplierName": null,
-          "AddOrderDate": "0001-01-01T00:00:00"
+          "AddOrderDate": "0001-01-01T00:00:00",
+          "tagsList": []
         },
         {
           "ProductArticleNumber": 0,
           "ProductName": "chips",
           "ProductPrice": 24,
           "ProductStockQuantity": 15,
+          "OrderAmount": 0,
           "SupplierName": null,
-          "AddOrderDate": "0001-01-01T00:00:00"
+          "AddOrderDate": "0001-01-01T00:00:00",
+          "tagsList": []
+        }
+      ]
+    },
+    {
+      "OrderNumber": 86485,
+      "OrderStatus": "Packing",
+      "OrderDate": "2026-11-13T16:34:57.431135+01:00",
+      "OrderReceivedDate": null,
+      "SupplierName": "",
+      "SupplierConfirmed": false,
+      "OrderType": "Outgoing Order",
+      "OrderedProductsList": [
+        {
+          "ProductArticleNumber": 0,
+          "ProductName": "Product 1",
+          "ProductPrice": 20,
+          "ProductStockQuantity": 0,
+          "OrderAmount": 5,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00",
+          "tagsList": []
+        }
+      ]
+    },
+    {
+      "OrderNumber": 96947,
+      "OrderStatus": "Packing",
+      "OrderDate": "2026-11-13T16:37:52.6093826+01:00",
+      "OrderReceivedDate": null,
+      "SupplierName": "",
+      "SupplierConfirmed": false,
+      "OrderType": "Outgoing Order",
+      "OrderedProductsList": [
+        {
+          "ProductArticleNumber": 0,
+          "ProductName": "Product 1",
+          "ProductPrice": 20,
+          "ProductStockQuantity": 0,
+          "OrderAmount": 5,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00",
+          "tagsList": []
+        }
+      ]
+    },
+    {
+      "OrderNumber": 84555,
+      "OrderStatus": "Packing",
+      "OrderDate": "2026-11-13T16:45:32.6531084+01:00",
+      "OrderReceivedDate": null,
+      "SupplierName": "",
+      "SupplierConfirmed": false,
+      "OrderType": "Outgoing Order",
+      "OrderedProductsList": [
+        {
+          "ProductArticleNumber": 1,
+          "ProductName": "Product 1",
+          "ProductPrice": 20,
+          "ProductStockQuantity": 0,
+          "OrderAmount": 5,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00",
+          "tagsList": []
+        }
+      ]
+    },
+    {
+      "OrderNumber": 50505,
+      "OrderStatus": "Packing",
+      "OrderDate": "2026-11-13T16:46:58.2564732+01:00",
+      "OrderReceivedDate": null,
+      "SupplierName": "blablabla",
+      "SupplierConfirmed": false,
+      "OrderType": "Incoming Order",
+      "OrderedProductsList": [
+        {
+          "ProductArticleNumber": 0,
+          "ProductName": "Product 1",
+          "ProductPrice": 20,
+          "ProductStockQuantity": 0,
+          "OrderAmount": 5,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00",
+          "tagsList": []
+        }
+      ]
+    },
+    {
+      "OrderNumber": 16689,
+      "OrderStatus": "Packing",
+      "OrderDate": "2026-11-13T16:47:49.7468838+01:00",
+      "OrderReceivedDate": null,
+      "SupplierName": "",
+      "SupplierConfirmed": false,
+      "OrderType": "Outgoing Order",
+      "OrderedProductsList": [
+        {
+          "ProductArticleNumber": 1,
+          "ProductName": "product 1",
+          "ProductPrice": 34,
+          "ProductStockQuantity": 0,
+          "OrderAmount": 5,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00",
+          "tagsList": []
         }
       ]
     }
@@ -237,13 +356,34 @@
           "ProductName": "blablabla",
           "ProductPrice": 24,
           "ProductStockQuantity": 5,
+          "OrderAmount": 0,
           "SupplierName": null,
-          "AddOrderDate": "0001-01-01T00:00:00"
+          "AddOrderDate": "0001-01-01T00:00:00",
+          "tagsList": []
         }
       ]
     }
   ],
-  "Products": [],
+  "Products": [
+    {
+      "ProductArticleNumber": 1,
+      "ProductName": "Product 1",
+      "ProductPrice": 10.99,
+      "ProductStockQuantity": 90,
+      "OrderAmount": 0,
+      "SupplierName": "ABC",
+      "AddOrderDate": "0001-01-01T00:00:00",
+      "tagsList": [
+        "blablabla",
+        "tag",
+        "1",
+        "tag",
+        "2",
+        "osv",
+        "da"
+      ]
+    }
+  ],
   "Suppliers": [
     {
       "SupplierCompanyName": "tennis company",

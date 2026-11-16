@@ -13,6 +13,7 @@ namespace Assignment_Group_Project.Scripts.Objects
         public string? ProductName { get; set; }
         public decimal ProductPrice { get; set; }
         public int ProductStockQuantity { get; set; }
+        public int OrderAmount { get; set; }
         public string? SupplierName { get; set; }
         public DateTime AddOrderDate { get; set; } 
         // Gör en lista av framtida sökfunktion
