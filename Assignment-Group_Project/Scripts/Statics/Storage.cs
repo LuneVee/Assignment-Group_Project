@@ -27,14 +27,20 @@ namespace Assignment_Group_Project.Scripts.Statics
         //};
 
 
-        //Storage Menu version 0.1
-        public static void StorageMenu()
+        public static void LoadData()
         {
+
             //Load Products
             DataStorage dataStorage = new DataStorage();
             AppData appData = dataStorage.Load();
 
+        }
 
+
+        //Storage Menu version 0.1
+        public static void StorageMenu()
+        {
+            //Create Menu!
             var StorageMenu = AnsiConsole
                 .Prompt(new SelectionPrompt<string>()
                 .AddChoices("Search Product", "Add Product to Storage List", "Update Product In Storage", "Remove Product from Storage List", "Back to Main Menu"));
@@ -58,12 +64,20 @@ namespace Assignment_Group_Project.Scripts.Statics
                     break;
 
                 case "Back to Main Menu":
-                    MainMenu.RunMenu();
-                    break;
+                    return;
 
             }
 
         }//Back To Main Menu = Finished Running Task!
+
+
+        //Add Product To Storage!
+        public static void AddProduct()
+        {
+
+
+
+        }
 
 
         //Create Product version 0.1
