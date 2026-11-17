@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Assignment_Group_Project.Scripts.Objects;
 using Spectre.Console;
@@ -12,26 +11,23 @@ public static class Order
     // Så att man kan använda metoden flera gånger med olika strings.
     private static void CreateOrder(string orderType)
     {
-        Console.Clear();
+        AnsiConsole.Clear();
 
-        // Hämtar data från data.json och sparar det i appData.
+        // Hämtar data från JSON-filen.
         DataStorage dataStorage = new DataStorage();
         AppData appData = dataStorage.Load();
 
-        // Skapar en lista, den sparar produkterna i ordern.
+        // Lista som sparar produkterna i ordern.
         List<Product> orderedProductsList = new();
 
-
-        // Skapar ett Random objekt som används för att generera ett automatiskt ordernummer.
+        // Skapar ett automatiskt ordernummer.
         Random random = new Random();
-
-        // Detta nummer används som order nummer.
         int orderNumber = random.Next(10000, 99999);
 
-        // Spara datum och tid för ordern.
+        // Sparar datum och tid för ordern.
         DateTime orderDate = DateTime.Now;
 
-        // Skapar ett objekt som innehåller info om den nya ordern.
+        // Skapar ett objekt för den nya ordern.
         OrderDetails newOrder = new OrderDetails
         {
             OrderNumber = orderNumber,
@@ -39,7 +35,7 @@ public static class Order
             OrderType = orderType,
         };
 
-        Console.WriteLine($"Starting {orderType}.");
+        AnsiConsole.Write(new Rule($"Starting {Markup.Escape(orderType)}"));
 
         bool addingMoreProducts = true;
 
@@ -47,134 +43,188 @@ public static class Order
         {
             Product newProduct = new();
 
-            // ?? "" hanterar null.
-            Console.Write("Enter the name of the product: ");
-            newProduct.ProductName = Console.ReadLine() ?? "";
+            // Frågar efter produktens namn med Spectre.Console.
+            newProduct.ProductName = AnsiConsole.Prompt(
+                new TextPrompt<string>("Enter the name of the product:")
+                    .AllowEmpty());
 
             if (string.IsNullOrWhiteSpace(newProduct.ProductName))
             {
-                Console.WriteLine("Product name cannot be empty");
+                ShowError("Product name cannot be empty");
                 continue;
             }
 
-            // Antal av produkt
-            Console.Write("Amount of product: ");
-            // Om det inte är siffor skriver den ut invalid amount.
-            // int parse kontrollerar om det är siffror och om det är mindre än 0.
-            if (!int.TryParse(Console.ReadLine(), out int amount) || amount <= 0)
+            // Kontrollerar att produkten finns i lagret för utgående ordrar.
+            Product? existingProduct = null;
+
+            if (orderType == "Outgoing Order")
             {
-                Console.WriteLine("Invalid amount. Enter number bigger then 0.");
+                existingProduct = appData.Products.FirstOrDefault(product =>
+                    product.ProductName != null &&
+                    product.ProductName.Equals(
+                        newProduct.ProductName,
+                        StringComparison.OrdinalIgnoreCase));
+
+                if (existingProduct == null)
+                {
+                    ShowError("Product does not exist in storage.");
+                    continue;
+                }
+
+                // Hämtar artikelnumret från produkten i lagret.
+                newProduct.ProductArticleNumber = existingProduct.ProductArticleNumber;
+            }
+
+            // Frågar efter antal.
+            string amountInput = AnsiConsole.Prompt(
+                new TextPrompt<string>("Amount of product:"));
+
+            if (!int.TryParse(amountInput, out int amount) || amount <= 0)
+            {
+                ShowError("Invalid amount. Enter number bigger than 0.");
                 continue;
             }
-            // TILLFÄLLIG lösning för att spara antalet i ordern, detta ändras med kopplingen till storage senare.
-            // Behöver skilja antalet i ordern och antalet i lagret.
-            newProduct.ProductStockQuantity = amount;
 
+            newProduct.OrderAmount = amount;
 
+            if (orderType == "Outgoing Order")
+            {
+                // Räknar hur många exemplar av samma produkt som redan finns i ordern.
+                int alreadyOrdered = orderedProductsList
+                    .Where(product => product.ProductArticleNumber == existingProduct!.ProductArticleNumber)
+                    .Sum(product => product.OrderAmount);
+
+                // Räknar ut hur många exemplar som fortfarande är tillgängliga.
+                int availableQuantity = existingProduct!.ProductStockQuantity - alreadyOrdered;
+
+                // Kontrollerar att lagret räcker.
+                if (amount > availableQuantity)
+                {
+                    ShowError($"Not enough products in stock. Available quantity: {availableQuantity}");
+                    continue;
+                }
+            }
 
             // Frågar efter pris per produkt.
-            Console.Write("Enter price per product: ");
+            string priceInput = AnsiConsole.Prompt(
+                new TextPrompt<string>("Enter price per product:"));
 
-            // Om det inte är siffor eller om det är mindre än 0, så skrivs detta ut.
-            // out decimal price skapar en variable som heter price.
-            if (!decimal.TryParse(Console.ReadLine(), out decimal price)|| price <= 0)
+            if (!decimal.TryParse(priceInput, out decimal price) || price <= 0)
             {
-                Console.WriteLine("Invalid price.");
+                ShowError("Invalid price.");
                 continue;
             }
-            newProduct.ProductPrice = price;
 
+            newProduct.ProductPrice = price;
 
             // Lägger till produkten i orderlistan.
             orderedProductsList.Add(newProduct);
 
-
-            Console.WriteLine("Product added!");
-
-
+            AnsiConsole.MarkupLine("[green]Product added![/]");
 
             // Frågar om användaren vill lägga till fler produkter.
-            Console.WriteLine("Do you want to add another product?");
+            AnsiConsole.MarkupLine("Do you want to add another product?");
+
             User.AskYesOrNo();
+
             // Kontrollerar användarens svar.
             if (User.inputChoice?.ToLower() != "yes")
             {
                 addingMoreProducts = false;
             }
         }
-            // Kopplar produktlistan till orderobjektet.
-            newOrder.OrderedProductsList = orderedProductsList;
 
+        // Kopplar produktlistan till orderobjektet.
+        newOrder.OrderedProductsList = orderedProductsList;
 
+        if (orderedProductsList.Count == 0)
+        {
+            AnsiConsole.MarkupLine("[red]Order must contain at least one product.[/]");
+            return;
+        }
 
+        // Leverantörens namn behövs endast för inkommande order.
+        string supplierName = "";
 
+        if (orderType == "Incoming Order")
+        {
+            supplierName = AnsiConsole.Prompt(
+                new TextPrompt<string>("Enter supplier company name:")
+                    .AllowEmpty());
 
-            if (orderedProductsList.Count == 0)
+            if (string.IsNullOrWhiteSpace(supplierName))
             {
-                Console.WriteLine("Order must contain at least one product.");
+                ShowError("Supplier name cannot be empty.");
                 return;
             }
+        }
 
+        // Sparar leverantörens namn i orderobjektet.
+        newOrder.SupplierName = supplierName;
 
-
-            // Leverantörens namn behövs endast för inkommande order.
-            string supplierName = "";
-
-            if (orderType == "Incoming Order")
+        // Minskar lagersaldot för varje produkt i en utgående order.
+        if (orderType == "Outgoing Order")
+        {
+            foreach (Product orderedProduct in orderedProductsList)
             {
-                Console.Write("Enter supplier company name: ");
-                supplierName = Console.ReadLine() ?? "";
+                // Hittar den riktiga produkten i lagerlistan.
+                Product? storageProduct = appData.Products.FirstOrDefault(product =>
+                    product.ProductArticleNumber == orderedProduct.ProductArticleNumber);
 
-                if (string.IsNullOrWhiteSpace(supplierName))
+                if (storageProduct != null)
                 {
-                    Console.WriteLine("Supplier name cannot be empty.");
-                    return;
+                    storageProduct.ProductStockQuantity -= orderedProduct.OrderAmount;
                 }
             }
-            // Sparar leverantörens namn i orderobjektet.
-            newOrder.SupplierName = supplierName;
-
-            // Lägger till den nya ordern i listan med alla order.
-            appData.Orders.Add(newOrder);
-
-            // Sparar all data och den den nya ordern i data.json.
-            dataStorage.Save(appData);
-
-
-
-            // Räknar ut totalsumman för hela ordern.
-            decimal totalOrderPrice = orderedProductsList.Sum(product => product.ProductPrice * product.ProductStockQuantity);
-
-
-
-            // Skriver ut orderns kvitto.
-            Console.WriteLine("\n========== ORDER RECEIPT ==========");
-            Console.WriteLine($"Order type: {orderType}");
-            Console.WriteLine($"Order number: {orderNumber}");
-            Console.WriteLine($"Order date: {orderDate:yyyy-MM-dd HH:mm}");
-            Console.WriteLine("-----------------------------------");
-
-            // Visar leverantörens namn endast för inkommande order.
-            if (orderType == "Incoming Order")
-            {
-                Console.WriteLine($"Supplier: {supplierName}");
-            }
-
-            
-
-            foreach (Product product in orderedProductsList)
-            {
-                Console.WriteLine($"Product: {product.ProductName}");
-                Console.WriteLine($"Amount: {product.ProductStockQuantity}");
-                Console.WriteLine($"Price per product: {product.ProductPrice:F2} kr");
-                Console.WriteLine($"Total: {product.ProductPrice * product.ProductStockQuantity:F2} kr");
-                Console.WriteLine("-----------------------------------");
-            }
-
-                Console.WriteLine($"TOTAL: {totalOrderPrice:F2} kr");
-                Console.WriteLine("===================================");
-            
         }
+
+        // Lägger till den nya ordern i listan med alla order.
+        appData.Orders.Add(newOrder);
+
+        // Sparar all data.
+        dataStorage.Save(appData);
+
+        // Räknar ut totalsumman för hela ordern.
+        decimal totalOrderPrice = orderedProductsList.Sum(
+            product => product.ProductPrice * product.OrderAmount);
+
+        // Visar kvittot med Spectre.Console.
+        AnsiConsole.Write(new Rule("[green]ORDER RECEIPT[/]"));
+
+        AnsiConsole.MarkupLine($"Order type: {Markup.Escape(orderType)}");
+        AnsiConsole.MarkupLine($"Order number: {orderNumber}");
+        AnsiConsole.MarkupLine($"Order date: {orderDate:yyyy-MM-dd HH:mm}");
+
+        if (orderType == "Incoming Order")
+        {
+            AnsiConsole.MarkupLine($"Supplier: {Markup.Escape(supplierName)}");
+        }
+
+        // Skapar en tabell för produkterna i ordern.
+        Table receiptTable = new Table();
+
+        receiptTable.AddColumn("Product");
+        receiptTable.AddColumn("Amount");
+        receiptTable.AddColumn("Price per product");
+        receiptTable.AddColumn("Total");
+
+        foreach (Product product in orderedProductsList)
+        {
+            receiptTable.AddRow(
+                Markup.Escape(product.ProductName ?? ""),
+                product.OrderAmount.ToString(),
+                $"{product.ProductPrice:F2} kr",
+                $"{product.ProductPrice * product.OrderAmount:F2} kr");
+        }
+
+        AnsiConsole.Write(receiptTable);
+
+        AnsiConsole.MarkupLine(
+            $"[bold green]TOTAL: {totalOrderPrice:F2} kr[/]");
+
+        AnsiConsole.Write(new Rule());
+    }
+
 
         
 
@@ -201,7 +251,7 @@ public static class Order
     // Metod för att uppdatera statusen på en befintlig order.
     public static void UpdateOrder()
     {
-        Console.Clear();
+        AnsiConsole.Clear();
 
         // Hämtar sparad data från JSON-filen.
         DataStorage dataStorage = new DataStorage();
@@ -213,7 +263,7 @@ public static class Order
         // Kontrollerar om det finns några aktiva ordrar.
         if (allOrdersList.Count == 0)
         {
-            Console.WriteLine("No orders found.");
+            AnsiConsole.MarkupLine("No orders found.");
             return;
         }
 
@@ -280,7 +330,7 @@ public static class Order
         }
 
         // Visar vilken order användaren har valt.
-        Console.WriteLine($"Order found, Current status: {orderToUpdate.OrderStatus}");
+        AnsiConsole.MarkupLine($"Order found, Current status: {orderToUpdate.OrderStatus}");
 
 
 
@@ -328,19 +378,18 @@ public static class Order
             // Kontrollerar att det är en Incoming Order.
             if (orderToUpdate.OrderType != "Incoming Order")
             {
-                Console.WriteLine("Supplier confirmation is only available for incoming orders.");
+                ShowError("Supplier confirmation is only available for incoming orders.");
                 return;
             }
 
             // Kontrollerar om ordern redan har blivit bekräftad.
             if (orderToUpdate.SupplierConfirmed)
             {
-                Console.WriteLine("This order has already been confirmed.");
+                ShowError("This order has already been confirmed.");
                 return;
             }
 
-            Console.WriteLine("Have you received an order confirmation from the supplier?");
-
+            AnsiConsole.MarkupLine("Have you received an order confirmation from the supplier?");
             // Frågar användaren om bekräftelsen har mottagits.
             User.AskYesOrNo();
 
@@ -352,11 +401,11 @@ public static class Order
                 // Sparar ändringen i JSON-filen.
                 dataStorage.Save(appData);
 
-                Console.WriteLine("Supplier confirmation successfully registered!");
+                AnsiConsole.MarkupLine("[green]Supplier confirmation successfully registered![/]");
             }
             else
             {
-                Console.WriteLine("No changes were made.");
+                AnsiConsole.MarkupLine("No changes were made.");
             }
 
             return;
@@ -367,7 +416,7 @@ public static class Order
         // Kontrollerar om användaren har valt att ta bort ordern.
         if (selectedOption == "Delete Order")
         {
-            Console.WriteLine($"Are you sure you want to delete order #{orderToUpdate.OrderNumber}?");
+            AnsiConsole.MarkupLine($"Are you sure you want to delete order #{orderToUpdate.OrderNumber}?");
 
             // Frågar användaren om borttagningen ska bekräftas.
             User.AskYesOrNo();
@@ -381,11 +430,11 @@ public static class Order
                 // Sparar ändringarna.
                 dataStorage.Save(appData);
 
-                Console.WriteLine("Order successfully deleted & moved to order history!");
+                AnsiConsole.MarkupLine("[green]Order successfully deleted & moved to order history![/]");
             }
             else
             {
-                Console.WriteLine("Order was not deleted.");
+                AnsiConsole.MarkupLine("Order was not deleted.");
             }
             return;
         }
@@ -401,11 +450,11 @@ public static class Order
             appData.Orders.Remove(orderToUpdate);
             appData.OrderHistory.Add(orderToUpdate);
 
-            Console.WriteLine("Order moved to order history!");
+            AnsiConsole.MarkupLine("[green]Order moved to order history![/]");
         }
         else
         {
-            Console.WriteLine($"Order status updated to: {selectedOption}");
+            AnsiConsole.MarkupLine($"[green]Order status updated to: {Markup.Escape(selectedOption)}[/]");
         }
 
         // Sparar ändringarna i JSON-filen.
@@ -421,7 +470,7 @@ public static class Order
 
     public static void CheckOrders()
     {
-        Console.Clear();
+        AnsiConsole.Clear();
 
         // Hämtar sparad data från JSON-filen.
         DataStorage dataStorage = new DataStorage();
@@ -436,7 +485,7 @@ public static class Order
         // Kontrollerar om det finns några order.
         if (appData.Orders.Count == 0)
         {
-            Console.WriteLine("No orders found.");
+            AnsiConsole.MarkupLine("No orders found.");
             return;
         }
 
@@ -448,19 +497,10 @@ public static class Order
         // Kontrollerar om det finns order av den valda typen.
         if (selectedOrdersList.Count == 0)
         {
-            Console.WriteLine("No orders found for this order type.");
+            AnsiConsole.MarkupLine("No orders found for this order type.");
             return;
         }
 
-
-        // Visar alla order av den valda typen.
-        foreach (OrderDetails order in selectedOrdersList)
-        {
-            Console.WriteLine($"Order Number: {order.OrderNumber}");
-            Console.WriteLine($"Order Status: {order.OrderStatus}");
-            Console.WriteLine($"Order Date: {order.OrderDate:yyyy-MM-dd HH:mm}");
-            Console.WriteLine("-----------------------------------");
-        }
 
         // Låter användaren välja vilken order som ska visas.
         OrderDetails selectedOrder = AnsiConsole.Prompt(new SelectionPrompt<OrderDetails>()
@@ -470,45 +510,65 @@ public static class Order
         //.AddChoices(selectedOrders) lägger till alla order i den filtrerade listan som valbara alternativ.
         .AddChoices(selectedOrdersList));
 
-        Console.Clear();
+        
         // Visar detaljer för den valda ordern.
-        Console.WriteLine("-----------------------------------");
-        Console.WriteLine($"Order Number: {selectedOrder.OrderNumber}");
-        Console.WriteLine($"Order Type: {selectedOrder.OrderType}");
-        Console.WriteLine($"Order Status: {selectedOrder.OrderStatus}");
-        Console.WriteLine($"Order Date: {selectedOrder.OrderDate:yyyy-MM-dd HH:mm}");
+        // Skapar en panel med information om den valda ordern.
+        var orderInfo = new List<string>
+        {
+            $"Order Number: {selectedOrder.OrderNumber}",
+            $"Order Type: {Markup.Escape(selectedOrder.OrderType ?? "-")}",
+            $"Order Status: {Markup.Escape(selectedOrder.OrderStatus)}",
+            $"Order Date: {selectedOrder.OrderDate:yyyy-MM-dd HH:mm}"
+        };
 
         // Visar leveranstörens namn om det finns.
         if (!string.IsNullOrEmpty(selectedOrder.SupplierName))
         {
-            Console.WriteLine($"Supplier: {selectedOrder.SupplierName}");
+            orderInfo.Add($"Supplier: {Markup.Escape(selectedOrder.SupplierName)}");
         }
-
 
         // Visar om leverantören har bekräftat en Incoming Order.
         if (selectedOrder.OrderType == "Incoming Order")
         {
             if (selectedOrder.SupplierConfirmed)
             {
-                Console.WriteLine("Supplier Confirmation: Confirmed");
+                orderInfo.Add("[green]Supplier Confirmation: Confirmed[/]");
             }
             else
             {
-                Console.WriteLine("Supplier Confirmation: Awaiting confirmation");
+                orderInfo.Add("Supplier Confirmation: Awaiting confirmation");
             }
         }
 
+        // Skapar en panel som visar orderinformationen.
+        var orderPanel = new Panel(string.Join("\n", orderInfo))
+            .Header("ORDER DETAILS")
+            .Border(BoxBorder.Rounded);
 
+        AnsiConsole.Write(orderPanel);
 
+        // Skapar en tabell för produkterna i ordern.
+        Table productTable = new Table();
 
-        Console.WriteLine("Ordered Products:");
+        productTable.Border(TableBorder.Rounded);
+        productTable.AddColumn("Product Name");
+        productTable.AddColumn("Amount");
+        productTable.AddColumn("Price per Product");
+        productTable.AddColumn("Total");
 
         foreach (Product product in selectedOrder.OrderedProductsList)
         {
             // F2 gör att priset visas med två decimaler.
-            Console.WriteLine($" - Product Name: {product.ProductName}, Amount: {product.ProductStockQuantity}, Price per Product: {product.ProductPrice:F2} kr");
+            productTable.AddRow(
+                Markup.Escape(product.ProductName ?? "-"),
+                product.OrderAmount.ToString(),
+                $"{product.ProductPrice:F2} kr",
+                $"{product.ProductPrice * product.OrderAmount:F2} kr"
+            );
         }
-        Console.WriteLine("-----------------------------------");
+
+        AnsiConsole.Write(productTable);
+
 
 
 
@@ -524,7 +584,11 @@ public static class Order
         // Användaren ska alltid kunna gå tillbaka.
         choices.Add("Go Back");
 
-        string choice = AnsiConsole.Prompt(new SelectionPrompt<string>().AddChoices(choices));
+        
+        string choice = AnsiConsole.Prompt(new SelectionPrompt<string>()
+            .Title("What would you like to do?")
+            .AddChoices(choices));
+
 
         switch (choice)
         {
@@ -542,11 +606,11 @@ public static class Order
 
                     dataStorage.Save(appData);
 
-                    Console.WriteLine("Order successfully moved to order history!");
+                    AnsiConsole.MarkupLine("[green]Order successfully moved to order history![/]");
                 }
                 else
                 {
-                    Console.WriteLine("Only shipped orders can be marked as delivered.");
+                    AnsiConsole.MarkupLine("[red]Only shipped orders can be marked as delivered.[/]");
                 }
                 break;
 
@@ -574,7 +638,7 @@ public static class Order
             string choice = AnsiConsole.Prompt(new SelectionPrompt<string>().Title("Order Menu")
                     .AddChoices(
                         "Check Orders",
-                        // "Check Order History", // Bonus, implementeras senare
+                        "Check Order History",
                         "Add Outgoing Order",
                         "Add Incoming Order",
                         "Update Order",
@@ -587,9 +651,9 @@ public static class Order
                     CheckOrders();
                     break;
 
-                // case "Check Order History":
-                //     CheckOrderHistory();
-                //     break;
+                case "Check Order History":
+                    CheckOrderHistory();
+                    break;
 
                 case "Add Outgoing Order":
                     AddOutgoingOrder();
@@ -615,7 +679,90 @@ public static class Order
             }
         }
     }
-}
+
+
+
+
+
+
+
+    public static void CheckOrderHistory()
+    {
+        AnsiConsole.Clear();
+
+        // Hämtar data från json och sparar det i appData.
+        DataStorage dataStorage = new DataStorage();
+        AppData appData = dataStorage.Load();
+
+        // Gör en lista som innehåller alla ordrar i orderhistoriken.
+        List<OrderDetails> orderHistoryList = appData.OrderHistory;
+
+        // Kontrollera om det finns några tidigare ordrar.
+        if (orderHistoryList.Count == 0)
+        {
+            AnsiConsole.MarkupLine("No orders found in order history.");
+            return;
+        }
+
+
+        // Låter användaren välja vilken order den vill titta mer på.
+        OrderDetails selectedOrder = AnsiConsole.Prompt(new SelectionPrompt<OrderDetails>()
+            .Title("Choose an order:")
+            //UseConverter bestämmer hur varje order ska visas i menyn. Här visas ordernummer och status.
+            .UseConverter(order => $"Order #{order.OrderNumber} - {order.OrderStatus}")
+            .AddChoices(orderHistoryList));
+
+
+        // Visar information om ordern.
+        var orderInfo = new List<string>
+        {
+            $"Order Number: {selectedOrder.OrderNumber}",
+            $"Order Type: {Markup.Escape(selectedOrder.OrderType ?? "")}",
+            $"Order Status: {Markup.Escape(selectedOrder.OrderStatus)}",
+            $"Order Date: {selectedOrder.OrderDate:yyyy-MM-dd HH:mm}"
+        };
+
+        // Visar mottagningsdatum om det finns.
+        if (selectedOrder.OrderReceivedDate != null)
+        {
+            orderInfo.Add($"Received Date: {selectedOrder.OrderReceivedDate:yyyy-MM-dd HH:mm}");
+        }
+
+        // Visar leverantör om det finns.
+        if (!string.IsNullOrEmpty(selectedOrder.SupplierName))
+        {
+            orderInfo.Add($"Supplier: {Markup.Escape(selectedOrder.SupplierName)}");
+        }
+
+        AnsiConsole.Write(new Rule("[green]ORDER HISTORY[/]"));
+
+        // Skapar en panel som visar orderinformationen.
+        var orderPanel = new Panel(string.Join("\n", orderInfo))
+            .Header("ORDER DETAILS")
+            .Border(BoxBorder.Rounded);
+
+        AnsiConsole.Write(orderPanel);
+
+        // Skapar en tabell för produkterna i ordern.
+        Table productTable = new Table();
+
+        productTable.AddColumn("Product Name");
+        productTable.AddColumn("Amount");
+        productTable.AddColumn("Price per Product");
+        productTable.AddColumn("Total");
+
+        foreach (Product product in selectedOrder.OrderedProductsList)
+        {
+            productTable.AddRow(
+                Markup.Escape(product.ProductName ?? "-"),
+                product.OrderAmount.ToString(),
+                $"{product.ProductPrice:F2} kr",
+                $"{product.ProductPrice * product.OrderAmount:F2} kr"
+            );
+        }
+
+        AnsiConsole.Write(productTable);
+    }
 
 
 
@@ -625,38 +772,10 @@ public static class Order
 
 
 
+    // Skriver ut error i röd text.
+    public static void ShowError (string message)
+    {
+        AnsiConsole.MarkupLine($"[red]{Markup.Escape(message)}[/]");
+    }
 
-
-
-
-
-namespace Assignment_Group_Project.Scripts.Objects
-{
-// Representerar en enskild order.
-public class OrderDetails
-{
-    // Orderns unika nummer.
-    public int OrderNumber { get; set; }
-
-    // Orderns nuvarande status.
-    public string OrderStatus { get; set; } = "Packing";
-
-    // Datum då ordern skapades.
-    public DateTime OrderDate { get; set; }
-
-    // Datum då ordern togs emot.
-    public DateTime? OrderReceivedDate { get; set; }
-
-    // Leverantörens namn.
-    public string? SupplierName { get; set; }
-
-    // Håller reda på om leverantören har bekräftat ordern. False för att det ska vara standard när ordern skapas.
-    public bool SupplierConfirmed { get; set; } = false;
-
-    // Typ av order, t.ex "Incoming Order" eller "Outgoing Order".
-    public string? OrderType { get; set;}
-
-    // Produkterna som ingår i ordern.
-    public List<Product> OrderedProductsList { get; set; } = new();
-}
 }

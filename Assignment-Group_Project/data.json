@@ -74,6 +74,7 @@
           "ProductName": "apelsin",
           "ProductPrice": 19,
           "ProductStockQuantity": 55,
+          "OrderAmount": 0,
           "SupplierName": null,
           "AddOrderDate": "0001-01-01T00:00:00"
         }
@@ -93,6 +94,7 @@
           "ProductName": "p\u00E4ron",
           "ProductPrice": 10,
           "ProductStockQuantity": 100,
+          "OrderAmount": 0,
           "SupplierName": null,
           "AddOrderDate": "0001-01-01T00:00:00"
         },
@@ -101,6 +103,7 @@
           "ProductName": "\u00E4pple",
           "ProductPrice": 9,
           "ProductStockQuantity": 99,
+          "OrderAmount": 0,
           "SupplierName": null,
           "AddOrderDate": "0001-01-01T00:00:00"
         }
@@ -120,6 +123,7 @@
           "ProductName": "3",
           "ProductPrice": 5,
           "ProductStockQuantity": 3,
+          "OrderAmount": 0,
           "SupplierName": null,
           "AddOrderDate": "0001-01-01T00:00:00"
         }
@@ -139,33 +143,27 @@
           "ProductName": "barnvagn",
           "ProductPrice": 500,
           "ProductStockQuantity": 5,
+          "OrderAmount": 0,
           "SupplierName": null,
           "AddOrderDate": "0001-01-01T00:00:00"
         }
       ]
     },
     {
-      "OrderNumber": 32963,
-      "OrderStatus": "Shipped",
-      "OrderDate": "2026-11-09T16:12:57.6711472+01:00",
+      "OrderNumber": 26415,
+      "OrderStatus": "Packing",
+      "OrderDate": "2026-11-17T11:03:36.5584094+01:00",
       "OrderReceivedDate": null,
-      "SupplierName": "",
+      "SupplierName": "dhl",
       "SupplierConfirmed": false,
-      "OrderType": "Outgoing Order",
+      "OrderType": "Incoming Order",
       "OrderedProductsList": [
         {
           "ProductArticleNumber": 0,
-          "ProductName": "godis",
-          "ProductPrice": 23,
-          "ProductStockQuantity": 10,
-          "SupplierName": null,
-          "AddOrderDate": "0001-01-01T00:00:00"
-        },
-        {
-          "ProductArticleNumber": 0,
-          "ProductName": "chips",
-          "ProductPrice": 24,
-          "ProductStockQuantity": 15,
+          "ProductName": "Bollar",
+          "ProductPrice": 20,
+          "ProductStockQuantity": 0,
+          "OrderAmount": 5,
           "SupplierName": null,
           "AddOrderDate": "0001-01-01T00:00:00"
         }
@@ -222,12 +220,41 @@
       "SupplierConfirmed": false,
       "OrderType": "Outgoing Order",
       "OrderedProductsList": []
+    },
+    {
+      "OrderNumber": 32963,
+      "OrderStatus": "Delivered",
+      "OrderDate": "2026-11-09T16:12:57.6711472+01:00",
+      "OrderReceivedDate": "2026-11-17T11:03:23.4817592+01:00",
+      "SupplierName": "",
+      "SupplierConfirmed": false,
+      "OrderType": "Outgoing Order",
+      "OrderedProductsList": [
+        {
+          "ProductArticleNumber": 0,
+          "ProductName": "godis",
+          "ProductPrice": 23,
+          "ProductStockQuantity": 10,
+          "OrderAmount": 0,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00"
+        },
+        {
+          "ProductArticleNumber": 0,
+          "ProductName": "chips",
+          "ProductPrice": 24,
+          "ProductStockQuantity": 15,
+          "OrderAmount": 0,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00"
+        }
+      ]
     }
   ],
   "Products": [],
   "Suppliers": [
     {
-      "SupplierCompanyName":"tennis company",
+      "SupplierCompanyName": "tennis company",
       "Email": "Info@tennis.se",
       "PhoneNumber": "070-1234567"
     }
