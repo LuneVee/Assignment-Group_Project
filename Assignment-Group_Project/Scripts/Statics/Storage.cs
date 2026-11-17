@@ -3,6 +3,7 @@ using Assignment_Group_Project.Scripts.Utilities;
 using Spectre.Console;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 
 namespace Assignment_Group_Project.Scripts.Statics
@@ -30,13 +31,16 @@ namespace Assignment_Group_Project.Scripts.Statics
         //Storage Menu version 0.1
         public static void StorageMenu()
         {
+            Console.Clear();
+
             //Create Menu!
 
             Write.StorageMenu();
 
             var StorageMenu = AnsiConsole
                 .Prompt(new SelectionPrompt<string>()
-                .AddChoices("Search Product", "Add Product to Storage List", "Update Product In Storage", "Remove Product from Storage List", "Storage History", "Back to Main Menu"));
+                .AddChoices
+                ("Search Product", "Add Product to Storage List", "Update Product In Storage", "Remove Product from Storage List", "Storage History", "Back to Main Menu"));
 
             switch (StorageMenu)
             {
@@ -45,7 +49,7 @@ namespace Assignment_Group_Project.Scripts.Statics
                     break;
 
                 case "Add Product to Storage List":
-                    AddProductToStorage();
+                    AddProduct();
                     break;
 
                 case "Update Product In Storage":
@@ -67,164 +71,327 @@ namespace Assignment_Group_Project.Scripts.Statics
         }//Back To Main Menu = Finished Running Task!
 
 
-        //Add Product To Storage!
-        public static void AddProduct()
-        {
-
-
-
-        }
-
-
         //Create Product version 0.1
-        public static void AddProductToStorage()
+        public static void AddProduct()
         {
 
             //Load Products
             DataStorage dataStorage = new DataStorage();
             AppData appData = dataStorage.Load();
 
-            var table = new Table();
+            var Products = appData.Products;
 
-            table.AddColumn("Product Name");
-            table.AddColumn("Article Number");
-            table.AddColumn("Stock Quantity");
-            table.AddColumn("Price Per Product");
-            table.AddColumn("Suppliers");
+            bool LoopTask = true;
 
-            AnsiConsole.MarkupLine("[blue]Create Product[/]");
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("Product Artical Number: ");
-            Console.ResetColor();
-
-            User.ReadInputInt();
-
-            Product Existing_Artical_Number = appData.Products.Find(a => a.ProductArticleNumber == User.inputInt);
-
-            //If Article Number already exist!
-            if (Existing_Artical_Number != null)
+            while (LoopTask == true)
             {
 
-                AnsiConsole.MarkupLine("[yellow]Artical number already exist![/]");
-                //Console.SetCursorPosition(40, 0);
-                table.AddRow(Existing_Artical_Number.ProductName.ToString(), Existing_Artical_Number.ProductArticleNumber.ToString(), Existing_Artical_Number.ProductStockQuantity.ToString(), Existing_Artical_Number.ProductPrice.ToString(), Existing_Artical_Number.SupplierName.ToString());
-                AnsiConsole.Write(table);
+                //
+                var table = new Table();
 
-                AnsiConsole.MarkupLine("[blue]Is this the same product that you wanted to create?[/]");
+                table.AddColumn("Product     ");                                                            //Product Name!
+                table.AddColumn("Artical ");                                                                //Artical Number!
+                table.AddColumn("Quantity");                                                                //Stock Quantity!
+                table.AddColumn("Price       ");                                                            //Price Per Product!
+                table.AddColumn("Company     ");                                                            //Company Suppliers!
 
-                User.AskYesOrNo();
+                Console.Clear();
 
-                switch (User.inputChoice)
+                //For index 0 to 9 in Products, add to table row!
+                for (int i = 0; i < Math.Min(Products.Count, 10); i++)
                 {
-                    default:
-                        AnsiConsole.MarkupLine("[red]ERROR! Something went wrong!");
-                        break;
-
-                    case "Yes":
-                        AnsiConsole.MarkupLine("[blue]Would you like to update the product info?[/]");
-
-                        User.AskYesOrNo();
-
-                        switch (User.inputChoice)
-                        {
-
-                            case "Yes":
-                                UpdateProductInStorage();
-                                break;
-
-                            case "No":
-                                Console.WriteLine("Cancelling Process!");
-                                Console.ReadKey();
-                                StorageMenu();
-                                break;
-                        }
-
-                        Console.ReadKey();
-
-                        break;
-
-                    case "No":
-                        Console.WriteLine("Cancelling Process!");
-                        Console.ReadKey();
-                        StorageMenu();
-                        break;
+                    table.AddRow(Products[i].ProductName.ToString(), Products[i].ProductArticleNumber.ToString(), Products[i].ProductStockQuantity.ToString(), Products[i].ProductPrice.ToString(), Products[i].SupplierName.ToString());
                 }
 
-            }
+                Write.CreatingProduct();
 
-            //If Article Number does not exist!
-            else
+                //
+                User.cursorPosition = new Vector2(Console.CursorLeft, Console.CursorTop);
+                Console.SetCursorPosition(((int)User.cursorPosition.X), ((int)User.cursorPosition.Y));
+                AnsiConsole.Write(new Align(table, HorizontalAlignment.Right));
+
+                //
+                Console.SetCursorPosition(((int)User.cursorPosition.X), ((int)User.cursorPosition.Y));
+                AnsiConsole.MarkupLine("[blue] Create Artical Number\n then Create Product![/]\n");
+                try
+                {
+                    User.inputInt = int.Parse(User.ReadLineAsIntRange("[cyan]  Enter a Artical Number[/]:", 7));
+                }
+                catch
+                {
+                    return;
+                }
+
+
+                Product? Existing_Artical_Number = Products.Find(a => a.ProductArticleNumber == User.inputInt);
+
+                //If Article Number already exist!
+                if (Existing_Artical_Number != null)
+                {
+                    Console.SetCursorPosition(((int)Console.WindowWidth - 70), 4);
+
+                    //
+                    for (int i = 0; i < 30; i++)
+                    {
+                        try
+                        {
+                            for (int s = 0; s < 70; s++)
+                            {
+                                AnsiConsole.Markup(" ");
+                            }
+                            Console.SetCursorPosition(((int)Console.WindowWidth - 70), Console.CursorTop + 1);
+                        }
+                        catch
+                        {
+                            break;
+                        }
+                    }
+
+                    Console.SetCursorPosition(((int)User.cursorPosition.X), ((int)User.cursorPosition.Y + 1));
+
+                    //Clear table!
+                    table = new Table();
+
+                    table.AddColumn("Product     ");                                                            //Product Name!
+                    table.AddColumn("Artical ");                                                                //Artical Number!
+                    table.AddColumn("Quantity");                                                                //Stock Quantity!
+                    table.AddColumn("Price       ");                                                            //Price Per Product!
+                    table.AddColumn("Company     ");                                                            //Company Suppliers!
+
+
+                    //Add Product and show its info!
+                    table
+                        .AddRow(Existing_Artical_Number.ProductName.ToString(),
+                        Existing_Artical_Number.ProductArticleNumber.ToString(),
+                        Existing_Artical_Number.ProductStockQuantity.ToString(),
+                        Existing_Artical_Number.ProductPrice.ToString(),
+                        Existing_Artical_Number.SupplierName.ToString());
+
+                    //Create and write Table Window on the right side!
+                    AnsiConsole.Write(new Align(table, HorizontalAlignment.Right));
+
+
+                    Console.SetCursorPosition(((int)User.cursorPosition.X), ((int)User.cursorPosition.Y + 3));
+
+                    AnsiConsole.MarkupLine("[yellow]  Artical number already exist![/]\n");
+
+                    AnsiConsole.MarkupLine("[blue]  Is this the product that you wanted to create?[/]");
+
+                    User.AskYesOrNo();
+
+                    switch (User.inputChoice)
+                    {
+                        default:
+                            AnsiConsole.MarkupLine("[red]  ERROR! Something went wrong!");
+                            break;
+
+                        case "Yes":
+                            Console.SetCursorPosition(((int)User.cursorPosition.X), ((int)User.cursorPosition.Y + 5));
+                            for (int i = 0; i < 48; i++)
+                            {
+                                AnsiConsole.Markup(" ");
+                            }
+                            Console.SetCursorPosition(((int)User.cursorPosition.X), ((int)User.cursorPosition.Y + 5));
+                            AnsiConsole.MarkupLine("[blue]  Would you like to update the product info?[/]");
+
+                            User.AskYesOrNo();
+
+                            switch (User.inputChoice)
+                            {
+
+                                case "Yes":
+                                    UpdateProductInStorage();
+                                    LoopTask = false;
+                                    break;
+
+                                case "No":
+                                    Console.SetCursorPosition(((int)User.cursorPosition.X), ((int)User.cursorPosition.Y + 5));
+                                    for (int i = 0; i < 48; i++)
+                                    {
+                                        AnsiConsole.Markup(" ");
+                                    }
+                                    Console.SetCursorPosition(((int)User.cursorPosition.X), ((int)User.cursorPosition.Y + 5));
+                                    AnsiConsole.MarkupLine("[yellow] Cancelling Process!\n Please chose another [/] [cyan]Artical Number![/]");
+                                    Console.ReadKey();
+                                    break;
+                            }
+                            break;
+
+                        case "No":
+                            AnsiConsole.MarkupLine("[yellow] Cancelling Process!\n Please chose another [/] [cyan]Artical Number![/]");
+                            Console.ReadKey();
+                            break;
+                    }
+
+                }
+
+                //If Article Number does not exist, Create new Product!
+                else
+                {
+                    CreateNewProduct();
+                    LoopTask = false;
+                }
+            }
+        }
+
+
+        //Create Product To Storage version 0.1
+        public static void CreateNewProduct()
+        {
+            //Load Products
+            DataStorage dataStorage = new DataStorage();
+            AppData appData = dataStorage.Load();
+
+            var Products = appData.Products;
+
+            AddToStorageHistory(User.inputInt.ToString(), "Creating");
+
+            //Create and set defualt values on Creating_Product_For_List!
+            Product Creating_Product_For_List = new Product();                                              //Create as a Product ref!
+
+            Creating_Product_For_List.ProductName = "";                                                            //Set Product Name!
+            Creating_Product_For_List.ProductArticleNumber = User.inputInt;                                        //Set Product Artical Number!
+            Creating_Product_For_List.ProductStockQuantity = 0;                                                    //Set Product Stock Quantity!
+            Creating_Product_For_List.ProductPrice = 0;                                                            //Set Product Price!
+            Creating_Product_For_List.SupplierName = "";                                                        //Set Product Supplier!
+
+            //Dictionary!
+            Dictionary<string, bool> Product_Info_That_Is_Created = new Dictionary<string, bool>()          //A Dictionary of Conditions!
             {
 
-                Product Creating_Product_For_List = new Product();
+                ["Name"] = false,
+                ["Quantity"] = false,
+                ["Price"] = false,
+                ["Company"] = false,
 
-                Creating_Product_For_List.ProductArticleNumber = User.inputInt;
+            };
 
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.Write("Product Name: ");
-                Console.ResetColor();
-                User.ReadInput();
-                Creating_Product_For_List.ProductName = User.input;
+            //Create Product!
+            while (true)
+            {
+                Console.Clear();                                                                            //Clear Console!
 
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.Write("Product Price: ");
-                Console.ResetColor();
-                User.ReadInputDecimal();
-                Creating_Product_For_List.ProductPrice = User.inputDecimal;
+                Write.CreatingProduct();                                                                    //Create Product Title Text!
 
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.Write("Product Stock Quantity: ");
-                Console.ResetColor();
-                User.ReadInputInt();
-                Creating_Product_For_List.ProductStockQuantity = User.inputInt;
+                //Clear and create new Table!
+                var table = new Table();                                                                    //Create table. If table already exist so will this overwrite the old one!
 
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.Write("Product Supplier Name: ");
-                Console.ResetColor();
-                User.ReadInput();
-                Creating_Product_For_List.SupplierName = User.input;
+                table.AddColumn("Product     ");                                                            //Product Name!
+                table.AddColumn("Artical ");                                                                //Artical Number!
+                table.AddColumn("Quantity");                                                                //Stock Quantity!
+                table.AddColumn("Price       ");                                                            //Price Per Product!
+                table.AddColumn("Company     ");                                                            //Company Suppliers!
 
-                while (User.input != "esc")
+                table.                                                                                      //
+                    AddRow(Creating_Product_For_List.ProductName.ToString(),                                       //
+                    Creating_Product_For_List.ProductArticleNumber.ToString(),                                     //
+                    Creating_Product_For_List.ProductStockQuantity.ToString(),                                     //
+                    Creating_Product_For_List.ProductPrice.ToString(),                                             //
+                    Creating_Product_For_List.SupplierName.ToString());                                         //
+
+                //Create and write Table Window on the right side!
+                AnsiConsole.Write(new Align(table, HorizontalAlignment.Right));                             //Create and write Table Window on the right side!
+
+                //Print out All tags from Creating_Product_For_List!
+                foreach (string Tag in Creating_Product_For_List.tagsList)                                  //
                 {
 
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    Console.Write("Product Tags (separate with space): ");
-                    Console.ResetColor();
-                    User.ReadInput();
+                    Console.SetCursorPosition(Console.WindowWidth - 64, Console.CursorTop++ + 1);           //
+                    AnsiConsole.Markup($"{Tag}, ");                                                         //
 
-                    if (User.input == "esc")
-                    {
-                        appData.Products.Add(Creating_Product_For_List);
-                        Console.WriteLine("Product has now been added.");
+                }
 
-                        // Lägger till den nya produkt i listan med alla produkter.
-                        appData.Products.Add(Creating_Product_For_List);
+                //Set Cursor Position!
+                Console.SetCursorPosition(((int)User.cursorPosition.X), ((int)User.cursorPosition.Y + 4));  //
+
+                var Create_Product_Options = AnsiConsole                                                    //
+                    .Prompt(new SelectionPrompt<string>()                                                   //
+                    .AddChoices                                                                             //
+                    ("Product Name", "Product Price", "Product Stock Quantity", "Product Supplier Name", "Add Tag", "Confirm Product", "Cancel Product"));
+
+                //
+                switch (Create_Product_Options)                                                             //
+                {
+                    case "Product Name":                                                                    //
+                        User.ReadInput();                                                                   //Read User Input!
+                        Creating_Product_For_List.ProductName = User.input;                                        //Set Product_Info_That_Is_Created Product Name to the same as User Input! 
+                        Product_Info_That_Is_Created["Name"] = true;                                        //Set Condition to true!
+                        break;
+
+                    case "Product Price":                                                                   //
+                        User.ReadInputInt();                                                               //
+                        Creating_Product_For_List.ProductPrice = User.inputInt;                                    //
+                        Product_Info_That_Is_Created["Price"] = true;                                       //
+                        break;
+
+                    case "Product Stock Quantity":                                                          //
+                        User.ReadInputInt();                                                               //
+                        Creating_Product_For_List.ProductStockQuantity = User.inputInt;                            //
+                        Product_Info_That_Is_Created["Quantity"] = true;                                    //
+                        break;
+
+                    case "Product Supplier Name":                                                           //
+                        User.ReadInput();                                                                   //
+                        Creating_Product_For_List.SupplierName = User.input;                                    //
+                        Product_Info_That_Is_Created["Company"] = true;                                     //
+                        break;
+
+                    case "Add Tag":                                                                         //
+                        User.ReadInput();                                                                   //
+                        Creating_Product_For_List.tagsList.Add(User.input);                                 //
+                        break;
+
+                    case "Confirm Product":                                                                 //
+
+                        //Check if all Conditions are met!
+                        int Valid_Bools = 0;                                                                //                   
+
+                        foreach (bool Valid in Product_Info_That_Is_Created.Values)                         //
+                        {
+                            if (Valid == true)                                                              //
+                            {
+                                Valid_Bools++;                                                              //
+                            }
+                        }
+
+                        //If Conditions are met!
+                        if (Valid_Bools >= Product_Info_That_Is_Created.Count)                              //
+                        {
+                            Products.Add(Creating_Product_For_List);                                        //
+
+                            //
+                            AnsiConsole.MarkupLine("[green]Product has now been added![/]");                //
+
+                            // Sparar all data och den nya produkten i data.json.
+                            dataStorage.Save(appData);
+
+                            AddToStorageHistory(Creating_Product_For_List.ProductName, "Added");                   //
+                            Console.ReadKey();                                                              //
+                            return;
+                        }
+                        //If Conditions are NOT met!
+                        else
+                        {
+                            Console.SetCursorPosition                                                       //
+                                (((int)User.cursorPosition.X), ((int)User.cursorPosition.Y + 3));
+                            AnsiConsole.MarkupLine("[red] Not Valid![/]");                                  //
+                            Console.ReadKey();                                                              //
+                        }
+                        break;
+
+                    case "Cancel Product":                                                                  //
+                        AddToStorageHistory                                                                 //
+                            (Creating_Product_For_List.ProductArticleNumber.ToString(), "Canceled");
 
                         // Sparar all data och den nya produkten i data.json.
                         dataStorage.Save(appData);
 
-                        table.AddRow(Creating_Product_For_List.ProductName.ToString(), Creating_Product_For_List.ProductArticleNumber.ToString(), Creating_Product_For_List.ProductStockQuantity.ToString(), Creating_Product_For_List.ProductPrice.ToString(), Creating_Product_For_List.SupplierName.ToString());
-
-                        Console.ReadKey();
-                    }
-                    else
-                    {
-
-                        List<string> Tags = User.input.Split(' ').Select(tag => tag.Trim()).ToList();
-
-                        foreach (string tag in Tags)
-                        {
-                            Creating_Product_For_List.tagsList.Add(tag);
-                            Console.Write($"{tag}  ");
-                        }
-
-
-                    }
+                        AnsiConsole.MarkupLine("[yellow] Creating Product has been Canceled![/]");          //
+                        Console.ReadKey();                                                                  //
+                        return;
 
                 }
-
             }
-
         }//Finished Running Task!
 
 
