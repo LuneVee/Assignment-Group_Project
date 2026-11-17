@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Assignment_Group_Project.Scripts.Objects;
 using Spectre.Console;
@@ -687,6 +686,9 @@ public static class Order
 
 
 
+    public static void CheckOrderHistory()
+    {
+        AnsiConsole.Clear();
 
     public static void CheckOrderHistory()
     {
@@ -706,6 +708,12 @@ public static class Order
             return;
         }
 
+        // Låter användaren välja vilken order den vill titta mer på.
+        OrderDetails selectedOrder = AnsiConsole.Prompt(new SelectionPrompt<OrderDetails>()
+            .Title("Choose an order:")
+            //UseConverter bestämmer hur varje order ska visas i menyn. Här visas ordernummer och status.
+            .UseConverter(order => $"Order #{order.OrderNumber} - {order.OrderStatus}")
+            .AddChoices(orderHistoryList));
 
         // Låter användaren välja vilken order den vill titta mer på.
         OrderDetails selectedOrder = AnsiConsole.Prompt(new SelectionPrompt<OrderDetails>()
