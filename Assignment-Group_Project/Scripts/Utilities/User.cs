@@ -14,7 +14,43 @@ namespace Assignment_Group_Project.Scripts.Utilities
         public static string? inputChoice { get; set; }
         public static int inputInt;
         public static decimal inputDecimal;
+        public static Vector2 cursorPosition = new Vector2();
 
+        //Read ``T´´ Input!
+        public static T ReadInput<T>(string InputText)                      //
+        {
+            //Create a Cursor Position Value!
+            Vector2 InputTextPosition = new Vector2                             //Vector2 values is Console Cursors current Position!
+                (Console.CursorLeft, Console.CursorTop);
+
+            //Run while Input is invalid!
+            while (true)                                                        //Loop code!
+            {
+                AnsiConsole.Markup(InputText);                                  //
+
+                string input = Console.ReadLine();                              //
+
+                //
+                try                                                             //
+                {
+                    return (T)Convert.ChangeType(input, typeof(T));             //
+                }
+                catch                                                           //
+                {
+                    Console.SetCursorPosition                                   //
+                        (((int)InputTextPosition.X + InputText.Count()), ((int)InputTextPosition.Y));
+
+                    //Remove the text that the User have entered!
+                    for (int i = 0; i < input.Count(); i++)                     //
+                    {
+                        AnsiConsole.Markup(" ");                                //
+                    }
+                    AnsiConsole.MarkupLine($"\n[red]Invalid Input![/]");        //
+                    Console.SetCursorPosition                                   //
+                        (((int)InputTextPosition.X), ((int)InputTextPosition.Y));
+                }
+            }
+        }
 
         //Read ``string´´ Input!
         public static void ReadInput()                                      //Read whatever the Input is. Made this because I don't want to type ``User.Input = Console.ReadLine()´´ all the time!
