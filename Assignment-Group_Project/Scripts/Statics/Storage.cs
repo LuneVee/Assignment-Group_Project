@@ -26,6 +26,16 @@ namespace Assignment_Group_Project.Scripts.Statics
 
         //};
 
+        //Load from 'Products.json' file!
+
+        private static List<Product> Products = DataStorage.Load<List<Product>>("Products.json");
+        private static List<string> ProductHistory = DataStorage.Load<List<string>>("ProductHistory.json");
+
+        private static void Load()
+        {
+            Products = DataStorage.Load<List<Product>>("Products.json");
+            ProductHistory = DataStorage.Load<List<string>>("ProductHistory.json");
+        }
 
         //Storage Menu version 0.1
         public static void StorageMenu()
@@ -81,8 +91,7 @@ namespace Assignment_Group_Project.Scripts.Statics
         {
 
             //Load Products
-            DataStorage dataStorage = new DataStorage();
-            AppData appData = dataStorage.Load();
+            Load();
 
             var table = new Table();
 
@@ -99,7 +108,7 @@ namespace Assignment_Group_Project.Scripts.Statics
 
             User.ReadInputInt();
 
-            Product Existing_Artical_Number = appData.Products.Find(a => a.ProductArticleNumber == User.inputInt);
+            Product Existing_Artical_Number = Products.Find(a => a.ProductArticleNumber == User.inputInt);
 
             //If Article Number already exist!
             if (Existing_Artical_Number != null)
@@ -194,14 +203,14 @@ namespace Assignment_Group_Project.Scripts.Statics
 
                     if (User.input == "esc")
                     {
-                        appData.Products.Add(Creating_Product_For_List);
+                        Products.Add(Creating_Product_For_List);
                         Console.WriteLine("Product has now been added.");
 
                         // Lägger till den nya produkt i listan med alla produkter.
-                        appData.Products.Add(Creating_Product_For_List);
+                        Products.Add(Creating_Product_For_List);
 
                         // Sparar all data och den nya produkten i data.json.
-                        dataStorage.Save(appData);
+                        DataStorage.Save("ProductList.json", Products);
 
                         table.AddRow(Creating_Product_For_List.ProductName.ToString(), Creating_Product_For_List.ProductArticleNumber.ToString(), Creating_Product_For_List.ProductStockQuantity.ToString(), Creating_Product_For_List.ProductPrice.ToString(), Creating_Product_For_List.SupplierName.ToString());
 
@@ -231,16 +240,12 @@ namespace Assignment_Group_Project.Scripts.Statics
         //Test Update Product In Storage version 0.1
         public static void UpdateProductInStorage()
         {
-
-            //Load Products
-            DataStorage dataStorage = new DataStorage();
-            AppData appData = dataStorage.Load();
-
+            Load();
 
             AnsiConsole.MarkupLine("[blue]What Product Would You Like To Update?[/]");
             List<string> choices = new List<string>();
             choices.Add("Search: ");
-            choices = appData.Products.FindAll(item => item != null).Select(item => item.ProductName).ToList();
+            choices = Products.FindAll(item => item != null).Select(item => item.ProductName).ToList();
             choices.Add("Back to Storage Menu");
 
             string UpdateOptions = AnsiConsole.Prompt(new SelectionPrompt<string>().AddChoices(choices));
@@ -251,7 +256,7 @@ namespace Assignment_Group_Project.Scripts.Statics
             }
             else
             {
-                Product productToUpdate = appData.Products.Find(item => item.ProductName == UpdateOptions);
+                Product productToUpdate = Products.Find(item => item.ProductName == UpdateOptions);
 
                 if (productToUpdate != null)
                 {
@@ -275,7 +280,7 @@ namespace Assignment_Group_Project.Scripts.Statics
                     productToUpdate.SupplierName = User.input;
 
                     // Sparar all data och den nya produkten i data.json.
-                    dataStorage.Save(appData);
+                    DataStorage.Save("ProductList.json", Products);
 
                     //
                     AnsiConsole.MarkupLine("[green]Product updated successfully![/]");
@@ -294,10 +299,6 @@ namespace Assignment_Group_Project.Scripts.Statics
         public static void RemoveProductFromStorage()
         {
 
-            //Load Products
-            DataStorage dataStorage = new DataStorage();
-            AppData appData = dataStorage.Load();
-
             AnsiConsole.MarkupLine                                                                              //Display a message to the user asking which product they would like to remove!
                 ("[blue]What Product Would You Like To Remove?[/]");
 
@@ -305,7 +306,7 @@ namespace Assignment_Group_Project.Scripts.Statics
             List<string> choices = new List<string>();
 
             choices.Add("Search:");                                                                             //Add "Search" as the first option to the list of choices!
-            foreach (var product in appData.Products)                                                                   //Loop through each product in the Products list and add its name to the choices list!
+            foreach (var product in Products)                                                                   //Loop through each product in the Products list and add its name to the choices list!
             {
                 if (product != null)                                                                            //Check if the product is not null before adding its name to the choices list!
                 {
@@ -327,7 +328,7 @@ namespace Assignment_Group_Project.Scripts.Statics
             }
             else
             {
-                Product productToRemove = appData.Products.Find(item => item.ProductName == ChoosenProduct);            //Find the product in the Products list that matches the chosen product name!
+                Product productToRemove = Products.Find(item => item.ProductName == ChoosenProduct);            //Find the product in the Products list that matches the chosen product name!
                 if (productToRemove != null)                                                                    //Check if the product to remove is not null!
                 {
                     AnsiConsole.MarkupLine                                                                      //Ask the user for confirmation before removing the product!
@@ -340,7 +341,7 @@ namespace Assignment_Group_Project.Scripts.Statics
                         //If the user confirms the removal, remove the product from the Products list and display a success message!
                         case "Yes":
 
-                            appData.Products.Remove(productToRemove);                                                   //Remove the product from the Products list!
+                            Products.Remove(productToRemove);                                                   //Remove the product from the Products list!
                             AnsiConsole.MarkupLine                                                              //Display a success message to the user!
                                 ($"[green]Product '{productToRemove.ProductName}' removed successfully![/]");
                             Console.ReadKey();                                                                  //Wait for the user to press a key before continuing!
@@ -372,8 +373,7 @@ namespace Assignment_Group_Project.Scripts.Statics
         {
 
             //Load Products
-            DataStorage dataStorage = new DataStorage();
-            AppData appData = dataStorage.Load();
+            Load();
 
             //
             AnsiConsole.MarkupLine("[blue]Test Storage[/]");
@@ -396,7 +396,7 @@ namespace Assignment_Group_Project.Scripts.Statics
                     table.AddColumn("Price Per Product");
                     table.AddColumn("Suppliers");
 
-                    foreach (var item in appData.Products)
+                    foreach (var item in Products)
                     {
 
                         table.AddRow(item.ProductName.ToString(), item.ProductArticleNumber.ToString(), item.ProductStockQuantity.ToString(), item.ProductPrice.ToString(), item.SupplierName.ToString());
@@ -419,9 +419,9 @@ namespace Assignment_Group_Project.Scripts.Statics
                     table.AddColumn("Suppliers");
 
                     //Check 1: Search if Input matches ArticleNumber exactly!
-                    List<Product> Find_Item_With_The_Exact_Atrical_Number_As_User_Input = appData.Products.FindAll(product => product.ProductArticleNumber.ToString() == User.input);
+                    List<Product> Find_Item_With_The_Exact_Atrical_Number_As_User_Input = Products.FindAll(product => product.ProductArticleNumber.ToString() == User.input);
 
-                    if (appData.Products.Exists(item => item.ProductArticleNumber.ToString() == User.input))
+                    if (Products.Exists(item => item.ProductArticleNumber.ToString() == User.input))
                     {
                         Console.WriteLine("Found product by exact match with Article Number!");
                         foreach (var product in Find_Item_With_The_Exact_Atrical_Number_As_User_Input)
@@ -433,9 +433,9 @@ namespace Assignment_Group_Project.Scripts.Statics
                     else
                     {
                         //Check 2: Search if Input matches ProductName exactly!
-                        List<Product> Find_Items_With_The_Exact_Name_As_User_Inpus = appData.Products.FindAll(product => product.ProductName.ToLower().Contains(User.input.ToLower())).ToList();
+                        List<Product> Find_Items_With_The_Exact_Name_As_User_Inpus = Products.FindAll(product => product.ProductName.ToLower().Contains(User.input.ToLower())).ToList();
 
-                        if (appData.Products.Exists(item => item.ProductName.ToLower() == User.input.ToLower()))
+                        if (Products.Exists(item => item.ProductName.ToLower() == User.input.ToLower()))
                         {
                             Console.WriteLine("Found product by exact match with Product Name!");
 
@@ -450,7 +450,7 @@ namespace Assignment_Group_Project.Scripts.Statics
                         {
 
                             //Check 3: Search if Input matches name of Product partially!
-                            List<Product> Find_Items_That_Contains_Input = appData.Products.FindAll(item => item.ProductName.ToLower().Contains(User.input.ToLower())).ToList();
+                            List<Product> Find_Items_That_Contains_Input = Products.FindAll(item => item.ProductName.ToLower().Contains(User.input.ToLower())).ToList();
 
                             if (Find_Items_That_Contains_Input.Count > 0)
                             {
@@ -467,7 +467,7 @@ namespace Assignment_Group_Project.Scripts.Statics
                             {
 
                                 //Check 4: Search if Input matches any of the Product Tags!
-                                List<Product> Find_Items_That_Contains_Input_In_Tags = appData.Products.FindAll(item => item.tagsList.Exists(tag => tag.ToLower().Contains(User.input.ToLower()))).ToList();
+                                List<Product> Find_Items_That_Contains_Input_In_Tags = Products.FindAll(item => item.tagsList.Exists(tag => tag.ToLower().Contains(User.input.ToLower()))).ToList();
 
                                 if (Find_Items_That_Contains_Input_In_Tags.Count > 0)
                                 {
@@ -504,8 +504,7 @@ namespace Assignment_Group_Project.Scripts.Statics
         {
 
             //Load Products
-            DataStorage dataStorage = new DataStorage();
-            AppData appData = dataStorage.Load();
+            Load();
 
             DateTime When_This_Got_Added_To_History = DateTime.Now;
 
@@ -513,8 +512,8 @@ namespace Assignment_Group_Project.Scripts.Statics
 
             string PushText = ($"{When_This_Got_Added_To_History} | {What_Product_Is_It} | {What_Condition_It_Was_Added}");
 
-            appData.ProductHistory.Add(PushText);
-            dataStorage.Save(appData);
+            ProductHistory.Add(PushText);
+            DataStorage.Save("ProductHistory.json", Products);
 
 
 
@@ -528,14 +527,13 @@ namespace Assignment_Group_Project.Scripts.Statics
             {
 
                 //Load Products
-                DataStorage dataStorage = new DataStorage();
-                AppData appData = dataStorage.Load();
+                Load();
 
                 Console.Clear();
 
                 //Write.ProductHistory();
 
-                List<string> History = appData.ProductHistory.AsEnumerable().Reverse().ToList();                               //
+                List<string> History = ProductHistory.AsEnumerable().Reverse().ToList();                               //
 
                 var table = new Table();
 
