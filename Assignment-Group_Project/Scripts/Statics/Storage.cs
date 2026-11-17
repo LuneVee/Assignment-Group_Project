@@ -27,64 +27,41 @@ namespace Assignment_Group_Project.Scripts.Statics
         //};
 
 
-        public static void LoadData()
-        {
-            while (true)
-            {
-
-                //Load Products
-                DataStorage dataStorage = new DataStorage();
-                AppData appData = dataStorage.Load();
-
-
-            //Load Products
-            DataStorage dataStorage = new DataStorage();
-            AppData appData = dataStorage.Load();
-
-        }
-
-
         //Storage Menu version 0.1
         public static void StorageMenu()
         {
             //Create Menu!
+
+            Write.StorageMenu();
+
             var StorageMenu = AnsiConsole
                 .Prompt(new SelectionPrompt<string>()
-                .AddChoices("Search Product", "Add Product to Storage List", "Update Product In Storage", "Remove Product from Storage List", "Back to Main Menu"));
+                .AddChoices("Search Product", "Add Product to Storage List", "Update Product In Storage", "Remove Product from Storage List", "Storage History", "Back to Main Menu"));
 
-                var StorageMenu = AnsiConsole
-                    .Prompt(new SelectionPrompt<string>()
-                    .AddChoices("Search Product", "Add Product to Storage List", "Update Product In Storage", "Remove Product from Storage List", "Storage History", "Back to Main Menu"));
+            switch (StorageMenu)
+            {
+                case "Search Product":
+                    SearchProductInStorage();
+                    break;
 
-                switch (StorageMenu)
-                {
-                    case "Search Product":
-                        SearchProductInStorage();
-                        break;
+                case "Add Product to Storage List":
+                    AddProductToStorage();
+                    break;
 
-                    case "Add Product to Storage List":
-                        AddProductToStorage();
-                        break;
+                case "Update Product In Storage":
+                    UpdateProductInStorage();
+                    break;
 
-                    case "Update Product In Storage":
-                        UpdateProductInStorage();
-                        break;
+                case "Remove Product from Storage List":
+                    RemoveProductFromStorage();
+                    break;
 
-                    case "Remove Product from Storage List":
-                        RemoveProductFromStorage();
-                        break;
+                case "Storage History":
+                    CheckStorageHistory();
+                    break;
+
                 case "Back to Main Menu":
                     return;
-
-                    case "Storage History":
-                        CheckStorageHistory();
-                        break;
-
-                    case "Back to Main Menu":
-                        return;
-
-                }
-
 
             }
         }//Back To Main Menu = Finished Running Task!
