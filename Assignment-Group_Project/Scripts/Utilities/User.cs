@@ -15,6 +15,8 @@ namespace Assignment_Group_Project.Scripts.Utilities
         public static int inputInt;
         public static decimal inputDecimal;
 
+        public static Vector2 cursorPosition = new Vector2();
+
 
         //Read ``string´´ Input!
         public static void ReadInput()                                      //Read whatever the Input is. Made this because I don't want to type ``User.Input = Console.ReadLine()´´ all the time!
