@@ -31,27 +31,6 @@
       "OrderedProductsList": []
     },
     {
-      "OrderNumber": 12730,
-      "OrderStatus": "Shipped",
-      "OrderDate": "2026-11-09T16:03:43.6668483+01:00",
-      "OrderReceivedDate": null,
-      "SupplierName": "",
-      "SupplierConfirmed": false,
-      "OrderType": "Outgoing Order",
-      "OrderedProductsList": [
-        {
-          "ProductArticleNumber": 0,
-          "ProductName": "apelsin",
-          "ProductPrice": 19,
-          "ProductStockQuantity": 55,
-          "OrderAmount": 0,
-          "SupplierName": null,
-          "AddOrderDate": "0001-01-01T00:00:00",
-          "tagsList": []
-        }
-      ]
-    },
-    {
       "OrderNumber": 65784,
       "OrderStatus": "Packing",
       "OrderDate": "2026-11-09T16:06:17.5279423+01:00",
@@ -84,7 +63,7 @@
     },
     {
       "OrderNumber": 52426,
-      "OrderStatus": "Packing",
+      "OrderStatus": "Shipped",
       "OrderDate": "2026-11-09T16:09:38.1421216+01:00",
       "OrderReceivedDate": null,
       "SupplierName": "",
@@ -172,7 +151,7 @@
       "OrderDate": "2026-11-13T16:46:58.2564732+01:00",
       "OrderReceivedDate": null,
       "SupplierName": "blablabla",
-      "SupplierConfirmed": false,
+      "SupplierConfirmed": true,
       "OrderType": "Incoming Order",
       "OrderedProductsList": [
         {
@@ -328,6 +307,195 @@
           "ProductPrice": 99,
           "ProductStockQuantity": 0,
           "OrderAmount": 100,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00",
+          "tagsList": []
+        }
+      ]
+    },
+    {
+      "OrderNumber": 73294,
+      "OrderStatus": "Cancelled",
+      "OrderDate": "2026-11-17T12:56:46.5024094+01:00",
+      "OrderReceivedDate": null,
+      "SupplierName": "dhl",
+      "SupplierConfirmed": false,
+      "OrderType": "Incoming Order",
+      "OrderedProductsList": [
+        {
+          "ProductArticleNumber": 0,
+          "ProductName": "stol",
+          "ProductPrice": 99,
+          "ProductStockQuantity": 0,
+          "OrderAmount": 50,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00",
+          "tagsList": []
+        }
+      ]
+    },
+    {
+      "OrderNumber": 85058,
+      "OrderStatus": "Packing",
+      "OrderDate": "2026-11-17T13:09:54.582043+01:00",
+      "OrderReceivedDate": null,
+      "SupplierName": "postnord",
+      "SupplierConfirmed": true,
+      "OrderType": "Incoming Order",
+      "OrderedProductsList": [
+        {
+          "ProductArticleNumber": 0,
+          "ProductName": "random",
+          "ProductPrice": 3535,
+          "ProductStockQuantity": 0,
+          "OrderAmount": 6,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00",
+          "tagsList": []
+        }
+      ]
+    },
+    {
+      "OrderNumber": 23265,
+      "OrderStatus": "Packing",
+      "OrderDate": "2026-11-17T13:14:10.3044301+01:00",
+      "OrderReceivedDate": null,
+      "SupplierName": "",
+      "SupplierConfirmed": false,
+      "OrderType": "Outgoing Order",
+      "OrderedProductsList": [
+        {
+          "ProductArticleNumber": 1,
+          "ProductName": "product 1",
+          "ProductPrice": 20,
+          "ProductStockQuantity": 0,
+          "OrderAmount": 1,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00",
+          "tagsList": []
+        }
+      ]
+    },
+    {
+      "OrderNumber": 61078,
+      "OrderStatus": "Packing",
+      "OrderDate": "2026-11-17T13:15:58.8973847+01:00",
+      "OrderReceivedDate": null,
+      "SupplierName": "postnord",
+      "SupplierConfirmed": false,
+      "OrderType": "Incoming Order",
+      "OrderedProductsList": [
+        {
+          "ProductArticleNumber": 0,
+          "ProductName": "blablablaaa",
+          "ProductPrice": 5535,
+          "ProductStockQuantity": 0,
+          "OrderAmount": 5,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00",
+          "tagsList": []
+        }
+      ]
+    },
+    {
+      "OrderNumber": 32271,
+      "OrderStatus": "Packing",
+      "OrderDate": "2026-11-17T13:16:24.7792586+01:00",
+      "OrderReceivedDate": null,
+      "SupplierName": "",
+      "SupplierConfirmed": false,
+      "OrderType": "Outgoing Order",
+      "OrderedProductsList": [
+        {
+          "ProductArticleNumber": 1,
+          "ProductName": "product 1",
+          "ProductPrice": 24,
+          "ProductStockQuantity": 0,
+          "OrderAmount": 1,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00",
+          "tagsList": []
+        }
+      ]
+    },
+    {
+      "OrderNumber": 59723,
+      "OrderStatus": "Packing",
+      "OrderDate": "2026-11-17T13:17:02.4890596+01:00",
+      "OrderReceivedDate": null,
+      "SupplierName": "",
+      "SupplierConfirmed": false,
+      "OrderType": "Outgoing Order",
+      "OrderedProductsList": [
+        {
+          "ProductArticleNumber": 1,
+          "ProductName": "product 1",
+          "ProductPrice": 23,
+          "ProductStockQuantity": 0,
+          "OrderAmount": 1,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00",
+          "tagsList": []
+        }
+      ]
+    },
+    {
+      "OrderNumber": 77689,
+      "OrderStatus": "Shipped",
+      "OrderDate": "2026-11-17T13:17:22.937897+01:00",
+      "OrderReceivedDate": null,
+      "SupplierName": "",
+      "SupplierConfirmed": false,
+      "OrderType": "Outgoing Order",
+      "OrderedProductsList": [
+        {
+          "ProductArticleNumber": 1,
+          "ProductName": "product 1",
+          "ProductPrice": 424,
+          "ProductStockQuantity": 0,
+          "OrderAmount": 1,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00",
+          "tagsList": []
+        }
+      ]
+    },
+    {
+      "OrderNumber": 82900,
+      "OrderStatus": "Packing",
+      "OrderDate": "2026-11-17T13:18:54.3855615+01:00",
+      "OrderReceivedDate": null,
+      "SupplierName": "",
+      "SupplierConfirmed": false,
+      "OrderType": "Outgoing Order",
+      "OrderedProductsList": [
+        {
+          "ProductArticleNumber": 1,
+          "ProductName": "product 1",
+          "ProductPrice": 24,
+          "ProductStockQuantity": 0,
+          "OrderAmount": 1,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00",
+          "tagsList": []
+        }
+      ]
+    },
+    {
+      "OrderNumber": 84438,
+      "OrderStatus": "Packing",
+      "OrderDate": "2026-11-17T13:19:36.0291192+01:00",
+      "OrderReceivedDate": null,
+      "SupplierName": "",
+      "SupplierConfirmed": false,
+      "OrderType": "Outgoing Order",
+      "OrderedProductsList": [
+        {
+          "ProductArticleNumber": 1,
+          "ProductName": "product 1",
+          "ProductPrice": 33,
+          "ProductStockQuantity": 0,
+          "OrderAmount": 2,
           "SupplierName": null,
           "AddOrderDate": "0001-01-01T00:00:00",
           "tagsList": []
@@ -551,6 +719,27 @@
           "tagsList": []
         }
       ]
+    },
+    {
+      "OrderNumber": 12730,
+      "OrderStatus": "Delivered",
+      "OrderDate": "2026-11-09T16:03:43.6668483+01:00",
+      "OrderReceivedDate": "2026-11-17T13:06:50.2241366+01:00",
+      "SupplierName": "",
+      "SupplierConfirmed": false,
+      "OrderType": "Outgoing Order",
+      "OrderedProductsList": [
+        {
+          "ProductArticleNumber": 0,
+          "ProductName": "apelsin",
+          "ProductPrice": 19,
+          "ProductStockQuantity": 55,
+          "OrderAmount": 0,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00",
+          "tagsList": []
+        }
+      ]
     }
   ],
   "Products": [
@@ -558,7 +747,7 @@
       "ProductArticleNumber": 1,
       "ProductName": "Product 1",
       "ProductPrice": 10.99,
-      "ProductStockQuantity": 90,
+      "ProductStockQuantity": 83,
       "OrderAmount": 0,
       "SupplierName": "ABC",
       "AddOrderDate": "0001-01-01T00:00:00",
@@ -573,6 +762,7 @@
       ]
     }
   ],
+  "ProductHistory": [],
   "Suppliers": [
     {
       "SupplierCompanyName": "tennis company",

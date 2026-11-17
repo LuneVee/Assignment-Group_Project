@@ -9,6 +9,7 @@ public static class Order
 
     // string orderType bedtyder att man kan skriva in en string som parameter när man anropar metoden.
     // Så att man kan använda metoden flera gånger med olika strings.
+    
     private static void CreateOrder(string orderType)
     {
         AnsiConsole.Clear();
@@ -185,45 +186,48 @@ public static class Order
         dataStorage.Save(appData);
 
         // Räknar ut totalsumman för hela ordern.
-        decimal totalOrderPrice = orderedProductsList.Sum(
-            product => product.ProductPrice * product.OrderAmount);
+        decimal totalOrderPrice = orderedProductsList.Sum(product => product.ProductPrice * product.OrderAmount);
 
         // Visar kvittot med Spectre.Console.
         AnsiConsole.Write(new Rule("[green]ORDER RECEIPT[/]"));
 
-        AnsiConsole.MarkupLine($"Order type: {Markup.Escape(orderType)}");
-        AnsiConsole.MarkupLine($"Order number: {orderNumber}");
-        AnsiConsole.MarkupLine($"Order date: {orderDate:yyyy-MM-dd HH:mm}");
-
-        if (orderType == "Incoming Order")
-        {
-            AnsiConsole.MarkupLine($"Supplier: {Markup.Escape(supplierName)}");
-        }
-
-        // Skapar en tabell för produkterna i ordern.
-        Table receiptTable = new Table();
-
-        receiptTable.AddColumn("Product");
-        receiptTable.AddColumn("Amount");
-        receiptTable.AddColumn("Price per product");
-        receiptTable.AddColumn("Total");
+        // Skapar information om produkterna i ordern.
+        var productInfo = new List<string>();
 
         foreach (Product product in orderedProductsList)
         {
-            receiptTable.AddRow(
-                Markup.Escape(product.ProductName ?? ""),
-                product.OrderAmount.ToString(),
-                $"{product.ProductPrice:F2} kr",
-                $"{product.ProductPrice * product.OrderAmount:F2} kr");
+            productInfo.Add($"Product Name: {Markup.Escape(product.ProductName ?? "-")}");
+            productInfo.Add($"Amount: {product.OrderAmount}");
+            productInfo.Add($"Price per Product: {product.ProductPrice:F2} kr");
+            productInfo.Add($"[green]Total: {product.ProductPrice * product.OrderAmount:F2} kr[/]");
         }
 
-        AnsiConsole.Write(receiptTable);
 
-        AnsiConsole.MarkupLine(
-            $"[bold green]TOTAL: {totalOrderPrice:F2} kr[/]");
+        // Skapar information om ordern.
+        var orderInfo = new List<string>
+        {
+            $"Order Type: {Markup.Escape(orderType)}",
+            $"Order Number: {orderNumber}",
+            $"Order Date: {orderDate:yyyy-MM-dd HH:mm}"
+        };
+
+        if (orderType == "Incoming Order")
+        {
+            orderInfo.Add($"Supplier: {Markup.Escape(supplierName)}");
+        }
+
+        // Skapar en panel som visar produkterna.
+        var orderPanel = new Panel(string.Join("\n", productInfo)).Header("ORDER").Border(BoxBorder.Rounded);
+
+        // Skapar en panel som visar orderinformationen.
+        var detailsPanel = new Panel(string.Join("\n", orderInfo)).Header("DETAILS").Border(BoxBorder.Rounded);
+
+        // Visar båda panelerna till vänster i konsolen.
+        AnsiConsole.Write(new Align(new Rows(orderPanel, detailsPanel),HorizontalAlignment.Left));
 
         AnsiConsole.Write(new Rule());
     }
+
 
 
         
@@ -329,10 +333,62 @@ public static class Order
             }
         }
 
-        // Visar vilken order användaren har valt.
-        AnsiConsole.MarkupLine($"Order found, Current status: {orderToUpdate.OrderStatus}");
+        // Visar detaljer för den valda ordern.
+        var orderInfo = new List<string>
+        {
+            $"Order Number: {orderToUpdate.OrderNumber}",
+            $"Order Type: {Markup.Escape(orderToUpdate.OrderType ?? "-")}",
+            $"Order Status: {Markup.Escape(orderToUpdate.OrderStatus)}",
+            $"Order Date: {orderToUpdate.OrderDate:yyyy-MM-dd HH:mm}"
+        };
 
+        if (orderToUpdate.OrderReceivedDate != null)
+        {
+            orderInfo.Add($"Received Date: {orderToUpdate.OrderReceivedDate:yyyy-MM-dd HH:mm}");
+        }
 
+        if (!string.IsNullOrEmpty(orderToUpdate.SupplierName))
+        {
+            orderInfo.Add($"Supplier: {Markup.Escape(orderToUpdate.SupplierName)}");
+        }
+
+        if (orderToUpdate.OrderType == "Incoming Order")
+        {
+            if (orderToUpdate.SupplierConfirmed)
+            {
+                orderInfo.Add("[green]Supplier Confirmation: Confirmed[/]");
+            }
+            else
+            {
+                orderInfo.Add("Supplier Confirmation: Awaiting confirmation");
+            }
+        }
+
+        // Skapar information om produkterna i ordern.
+        var productInfo = new List<string>();
+
+        foreach (Product product in orderToUpdate.OrderedProductsList)
+        {
+            productInfo.Add($"Product Name: {Markup.Escape(product.ProductName ?? "-")}");
+            productInfo.Add($"Amount: {product.OrderAmount}");
+            productInfo.Add($"Price per Product: {product.ProductPrice:F2} kr");
+            productInfo.Add($"Total: {product.ProductPrice * product.OrderAmount:F2} kr");
+            productInfo.Add("");
+        }
+
+        decimal totalOrderPrice = orderToUpdate.OrderedProductsList.Sum(
+            product => product.ProductPrice * product.OrderAmount);
+
+        productInfo.Add($"[bold green]TOTAL: {totalOrderPrice:F2} kr[/]");
+
+        // Skapar en panel som visar produkterna.
+        var orderPanel = new Panel(string.Join("\n", productInfo)).Header("ORDER").Border(BoxBorder.Rounded);
+
+        // Skapar en panel som visar orderinformationen.
+        var detailsPanel = new Panel(string.Join("\n", orderInfo)).Header("DETAILS").Border(BoxBorder.Rounded);
+
+        // Visar båda panelerna till höger i konsolen.
+        AnsiConsole.Write(new Align(new Rows(orderPanel, detailsPanel),HorizontalAlignment.Right));
 
         // Skapar en lista med tillåtna statusändringar.
         List<string> availableStatuses = new();
@@ -369,8 +425,6 @@ public static class Order
         {
             return;
         }
-
-
 
         // Kontrollerar om användaren vill registrera en leverantörsbekräftelse.
         if (selectedOption == "Register Supplier Confirmation")
@@ -410,8 +464,6 @@ public static class Order
 
             return;
         }
-
-
 
         // Kontrollerar om användaren har valt att ta bort ordern.
         if (selectedOption == "Delete Order")
@@ -468,6 +520,7 @@ public static class Order
 
 
 
+    
     public static void CheckOrders()
     {
         AnsiConsole.Clear();
@@ -521,7 +574,7 @@ public static class Order
             $"Order Date: {selectedOrder.OrderDate:yyyy-MM-dd HH:mm}"
         };
 
-        // Visar leveranstörens namn om det finns.
+        // Visar leverantörens namn om det finns.
         if (!string.IsNullOrEmpty(selectedOrder.SupplierName))
         {
             orderInfo.Add($"Supplier: {Markup.Escape(selectedOrder.SupplierName)}");
@@ -540,36 +593,27 @@ public static class Order
             }
         }
 
-        // Skapar en panel som visar orderinformationen.
-        var orderPanel = new Panel(string.Join("\n", orderInfo))
-            .Header("ORDER DETAILS")
-            .Border(BoxBorder.Rounded);
-
-        AnsiConsole.Write(orderPanel);
-
-        // Skapar en tabell för produkterna i ordern.
-        Table productTable = new Table();
-
-        productTable.Border(TableBorder.Rounded);
-        productTable.AddColumn("Product Name");
-        productTable.AddColumn("Amount");
-        productTable.AddColumn("Price per Product");
-        productTable.AddColumn("Total");
+        // Skapar information om produkterna i ordern.
+        var productInfo = new List<string>();
 
         foreach (Product product in selectedOrder.OrderedProductsList)
         {
             // F2 gör att priset visas med två decimaler.
-            productTable.AddRow(
-                Markup.Escape(product.ProductName ?? "-"),
-                product.OrderAmount.ToString(),
-                $"{product.ProductPrice:F2} kr",
-                $"{product.ProductPrice * product.OrderAmount:F2} kr"
-            );
+            productInfo.Add($"Product Name: {Markup.Escape(product.ProductName ?? "-")}");
+            productInfo.Add($"Amount: {product.OrderAmount}");
+            productInfo.Add($"Price per Product: {product.ProductPrice:F2} kr");
+            productInfo.Add($"Total: {product.ProductPrice * product.OrderAmount:F2} kr");
+            productInfo.Add("");
         }
 
-        AnsiConsole.Write(productTable);
+        // Skapar en panel som visar produkterna.
+        var orderPanel = new Panel(string.Join("\n", productInfo)).Header("ORDER").Border(BoxBorder.Rounded);
 
+        // Skapar en panel som visar orderinformationen.
+        var detailsPanel = new Panel(string.Join("\n", orderInfo)).Header("DETAILS").Border(BoxBorder.Rounded);
 
+        // Visar båda panelerna till höger i konsolen.
+        AnsiConsole.Write(new Align(new Rows(orderPanel, detailsPanel),HorizontalAlignment.Right));
 
 
         // Skapa menyvalen som användaren kan välja mellan.
@@ -615,9 +659,10 @@ public static class Order
                 break;
 
             case "Go Back":
-            return;
+                return;
         }
     }
+
 
 
 
@@ -683,13 +728,6 @@ public static class Order
 
 
 
-
-
-
-    public static void CheckOrderHistory()
-    {
-        AnsiConsole.Clear();
-
     public static void CheckOrderHistory()
     {
         AnsiConsole.Clear();
@@ -707,13 +745,6 @@ public static class Order
             AnsiConsole.MarkupLine("No orders found in order history.");
             return;
         }
-
-        // Låter användaren välja vilken order den vill titta mer på.
-        OrderDetails selectedOrder = AnsiConsole.Prompt(new SelectionPrompt<OrderDetails>()
-            .Title("Choose an order:")
-            //UseConverter bestämmer hur varje order ska visas i menyn. Här visas ordernummer och status.
-            .UseConverter(order => $"Order #{order.OrderNumber} - {order.OrderStatus}")
-            .AddChoices(orderHistoryList));
 
         // Låter användaren välja vilken order den vill titta mer på.
         OrderDetails selectedOrder = AnsiConsole.Prompt(new SelectionPrompt<OrderDetails>()
@@ -746,32 +777,26 @@ public static class Order
 
         AnsiConsole.Write(new Rule("[green]ORDER HISTORY[/]"));
 
-        // Skapar en panel som visar orderinformationen.
-        var orderPanel = new Panel(string.Join("\n", orderInfo))
-            .Header("ORDER DETAILS")
-            .Border(BoxBorder.Rounded);
-
-        AnsiConsole.Write(orderPanel);
-
-        // Skapar en tabell för produkterna i ordern.
-        Table productTable = new Table();
-
-        productTable.AddColumn("Product Name");
-        productTable.AddColumn("Amount");
-        productTable.AddColumn("Price per Product");
-        productTable.AddColumn("Total");
+        // Skapar information om produkterna i ordern.
+        var productInfo = new List<string>();
 
         foreach (Product product in selectedOrder.OrderedProductsList)
         {
-            productTable.AddRow(
-                Markup.Escape(product.ProductName ?? "-"),
-                product.OrderAmount.ToString(),
-                $"{product.ProductPrice:F2} kr",
-                $"{product.ProductPrice * product.OrderAmount:F2} kr"
-            );
+            productInfo.Add($"Product Name: {Markup.Escape(product.ProductName ?? "-")}");
+            productInfo.Add($"Amount: {product.OrderAmount}");
+            productInfo.Add($"Price per Product: {product.ProductPrice:F2} kr");
+            productInfo.Add($"Total: {product.ProductPrice * product.OrderAmount:F2} kr");
+            productInfo.Add("");
         }
 
-        AnsiConsole.Write(productTable);
+        // Skapar en panel som visar produkterna.
+        var orderPanel = new Panel(string.Join("\n", productInfo)).Header("ORDER").Border(BoxBorder.Rounded);
+
+        // Skapar en panel som visar orderinformationen.
+        var detailsPanel = new Panel(string.Join("\n", orderInfo)).Header("DETAILS").Border(BoxBorder.Rounded);
+
+        // Visar båda panelerna till höger i konsolen.
+        AnsiConsole.Write(new Align(new Rows(orderPanel, detailsPanel),HorizontalAlignment.Right));
     }
 
 
