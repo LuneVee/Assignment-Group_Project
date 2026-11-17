@@ -294,7 +294,7 @@
     },
     {
       "OrderNumber": 13950,
-      "OrderStatus": "Packing",
+      "OrderStatus": "Shipped",
       "OrderDate": "2026-11-16T18:40:43.6648669+01:00",
       "OrderReceivedDate": null,
       "SupplierName": "dhl",
@@ -307,6 +307,27 @@
           "ProductPrice": 48,
           "ProductStockQuantity": 0,
           "OrderAmount": 55,
+          "SupplierName": null,
+          "AddOrderDate": "0001-01-01T00:00:00",
+          "tagsList": []
+        }
+      ]
+    },
+    {
+      "OrderNumber": 58674,
+      "OrderStatus": "Shipped",
+      "OrderDate": "2026-11-17T10:04:25.1027797+01:00",
+      "OrderReceivedDate": null,
+      "SupplierName": "DHL",
+      "SupplierConfirmed": true,
+      "OrderType": "Incoming Order",
+      "OrderedProductsList": [
+        {
+          "ProductArticleNumber": 0,
+          "ProductName": "Basketboll",
+          "ProductPrice": 99,
+          "ProductStockQuantity": 0,
+          "OrderAmount": 100,
           "SupplierName": null,
           "AddOrderDate": "0001-01-01T00:00:00",
           "tagsList": []
@@ -537,7 +558,7 @@
       "ProductArticleNumber": 1,
       "ProductName": "Product 1",
       "ProductPrice": 10.99,
-      "ProductStockQuantity": 73,
+      "ProductStockQuantity": 90,
       "OrderAmount": 0,
       "SupplierName": "ABC",
       "AddOrderDate": "0001-01-01T00:00:00",
