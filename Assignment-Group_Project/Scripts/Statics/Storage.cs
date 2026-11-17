@@ -30,7 +30,7 @@ namespace Assignment_Group_Project.Scripts.Statics
         //Storage Menu version 0.1
         public static void StorageMenu()
         {
-            while(true)
+            while (true)
             {
 
                 //Load Products
@@ -255,16 +255,16 @@ namespace Assignment_Group_Project.Scripts.Statics
                 {
                     AnsiConsole.MarkupLine($"[blue]Updating Product: {productToUpdate.ProductName}[/]");
                     Console.WriteLine("Enter new values (leave blank to keep current value):");
-                    
+
                     Console.Write($"Product Name ({productToUpdate.ProductName}): ");
-                    User.ReadInput();  
+                    User.ReadInput();
                     productToUpdate.ProductName = User.input;
 
                     Console.Write($"Product Price ({productToUpdate.ProductPrice}): ");
                     User.ReadInputDecimal();
                     productToUpdate.ProductPrice = User.inputDecimal;
 
-                    Console.Write($"Product Stock Quantity ({productToUpdate.ProductStockQuantity}): "); 
+                    Console.Write($"Product Stock Quantity ({productToUpdate.ProductStockQuantity}): ");
                     User.ReadInputInt();
                     productToUpdate.ProductStockQuantity = User.inputInt;
 
@@ -495,6 +495,28 @@ namespace Assignment_Group_Project.Scripts.Statics
                     return;
             }
         }//Finished Running Task!
+
+
+        //
+        public static void AddToStorageHistory(string What_Product_Is_It, string What_Condition_It_Was_Added)
+        {
+
+            //Load Products
+            DataStorage dataStorage = new DataStorage();
+            AppData appData = dataStorage.Load();
+
+            DateTime When_This_Got_Added_To_History = DateTime.Now;
+
+
+
+            string PushText = ($"{When_This_Got_Added_To_History} | {What_Product_Is_It} | {What_Condition_It_Was_Added}");
+
+            appData.ProductHistory.Add(PushText);
+            dataStorage.Save(appData);
+
+
+
+        }
 
 
         //
