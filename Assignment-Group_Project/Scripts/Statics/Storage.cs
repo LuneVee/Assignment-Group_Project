@@ -30,39 +30,47 @@ namespace Assignment_Group_Project.Scripts.Statics
         //Storage Menu version 0.1
         public static void StorageMenu()
         {
-            //Load Products
-            DataStorage dataStorage = new DataStorage();
-            AppData appData = dataStorage.Load();
-
-
-            var StorageMenu = AnsiConsole
-                .Prompt(new SelectionPrompt<string>()
-                .AddChoices("Search Product", "Add Product to Storage List", "Update Product In Storage", "Remove Product from Storage List", "Back to Main Menu"));
-
-            switch (StorageMenu)
+            while(true)
             {
-                case "Search Product":
-                    SearchProductInStorage();
-                    break;
 
-                case "Add Product to Storage List":
-                    AddProductToStorage();
-                    break;
+                //Load Products
+                DataStorage dataStorage = new DataStorage();
+                AppData appData = dataStorage.Load();
 
-                case "Update Product In Storage":
-                    UpdateProductInStorage();
-                    break;
 
-                case "Remove Product from Storage List":
-                    RemoveProductFromStorage();
-                    break;
+                var StorageMenu = AnsiConsole
+                    .Prompt(new SelectionPrompt<string>()
+                    .AddChoices("Search Product", "Add Product to Storage List", "Update Product In Storage", "Remove Product from Storage List", "Storage History", "Back to Main Menu"));
 
-                case "Back to Main Menu":
-                    MainMenu.RunMenu();
-                    break;
+                switch (StorageMenu)
+                {
+                    case "Search Product":
+                        SearchProductInStorage();
+                        break;
+
+                    case "Add Product to Storage List":
+                        AddProductToStorage();
+                        break;
+
+                    case "Update Product In Storage":
+                        UpdateProductInStorage();
+                        break;
+
+                    case "Remove Product from Storage List":
+                        RemoveProductFromStorage();
+                        break;
+
+                    case "Storage History":
+                        CheckStorageHistory();
+                        break;
+
+                    case "Back to Main Menu":
+                        return;
+
+                }
+
 
             }
-
         }//Back To Main Menu = Finished Running Task!
 
 
@@ -488,6 +496,62 @@ namespace Assignment_Group_Project.Scripts.Statics
             }
         }//Finished Running Task!
 
+
+        //
+        public static void CheckStorageHistory()
+        {
+            while (true)
+            {
+
+                //Load Products
+                DataStorage dataStorage = new DataStorage();
+                AppData appData = dataStorage.Load();
+
+                Console.Clear();
+
+                //Write.ProductHistory();
+
+                List<string> History = appData.ProductHistory.AsEnumerable().Reverse().ToList();                               //
+
+                var table = new Table();
+
+                table.AddColumn("Storage History!");
+
+                int foreachTime = 0;
+                foreach (string History_Action in History)
+                {
+                    if (foreachTime <= 10)
+                    {
+                        table.AddRow(History_Action);
+                    }
+                    else
+                    {
+                        break;
+                    }
+
+                }
+
+                //Create and write Table Window on the right side!
+                AnsiConsole.Write(new Align(table, HorizontalAlignment.Right));
+
+                Console.SetCursorPosition(0, 4);
+
+                var Option = AnsiConsole
+                    .Prompt(new SelectionPrompt<string>().AddChoices("Search: ", "Back To Storage Menu"));
+
+                switch (Option)
+                {
+                    case "Search: ":
+
+
+                        break;
+
+                    case "Back To Storage Menu":
+                        return;
+
+                }
+            }
+        }
 
     }
 }
