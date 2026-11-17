@@ -24,8 +24,6 @@ public static class Order
 
         // Skapar ett Random objekt som används för att generera ett automatiskt ordernummer.
         Random random = new Random();
-
-        // Detta nummer används som order nummer.
         int orderNumber = random.Next(10000, 99999);
 
         // Spara datum och tid för ordern.
@@ -47,15 +45,34 @@ public static class Order
         {
             Product newProduct = new();
 
-            // ?? "" hanterar null.
             Console.Write("Enter the name of the product: ");
-            newProduct.ProductName = Console.ReadLine() ?? "";
+            newProduct.ProductName = Console.ReadLine();
 
             if (string.IsNullOrWhiteSpace(newProduct.ProductName))
             {
-                Console.WriteLine("Product name cannot be empty");
+                ShowError("Product name cannot be empty");
                 continue;
             }
+
+            // Kontrollerar att produkten finns i lagret för utgående ordrar.
+            Product? existingProduct = null;
+
+
+            if (orderType == "Outgoing Order")
+            {
+                existingProduct = appData.Products.FirstOrDefault(product =>
+                    product.ProductName != null &&
+                    product.ProductName.Equals(newProduct.ProductName, StringComparison.OrdinalIgnoreCase));
+
+                if (existingProduct == null)
+                {
+                    ShowError("Product does not exist in storage.");
+                    continue;
+                }
+                // Hämtar artikelnumret från den riktiga produkten i lagret.
+                newProduct.ProductArticleNumber = existingProduct.ProductArticleNumber;
+            }
+
 
             // Antal av produkt
             Console.Write("Amount of product: ");
@@ -63,23 +80,41 @@ public static class Order
             // int parse kontrollerar om det är siffror och om det är mindre än 0.
             if (!int.TryParse(Console.ReadLine(), out int amount) || amount <= 0)
             {
-                Console.WriteLine("Invalid amount. Enter number bigger then 0.");
+                ShowError("Invalid amount. Enter number bigger then 0.");
                 continue;
             }
-            // TILLFÄLLIG lösning för att spara antalet i ordern, detta ändras med kopplingen till storage senare.
-            // Behöver skilja antalet i ordern och antalet i lagret.
-            newProduct.ProductStockQuantity = amount;
+
+            newProduct.OrderAmount = amount;
+
+            
+            if (orderType == "Outgoing Order")
+            {
+                // Räknar hur många exemplar av samma produkt som redan finns i ordern.
+                int alreadyOrdered = orderedProductsList
+                    .Where(product => product.ProductArticleNumber == existingProduct!.ProductArticleNumber)
+                    .Sum(product => product.OrderAmount);
+
+                // Räknar ut hur många exemplar som fortfarande är tillgängliga.
+                int availableQuantity = existingProduct!.ProductStockQuantity - alreadyOrdered;
+
+                // Kontrollerar att det finns tillräckligt många produkter kvar i lagret.
+                if (amount > availableQuantity)
+                {
+                    ShowError($"Not enough products in stock. Available quantity: {availableQuantity}");
+                    continue;
+                }
+            }
 
 
 
-            // Frågar efter pris per produkt.
+
+            // Pris per produkt.
             Console.Write("Enter price per product: ");
-
             // Om det inte är siffor eller om det är mindre än 0, så skrivs detta ut.
             // out decimal price skapar en variable som heter price.
             if (!decimal.TryParse(Console.ReadLine(), out decimal price)|| price <= 0)
             {
-                Console.WriteLine("Invalid price.");
+                ShowError("Invalid price.");
                 continue;
             }
             newProduct.ProductPrice = price;
@@ -87,8 +122,6 @@ public static class Order
 
             // Lägger till produkten i orderlistan.
             orderedProductsList.Add(newProduct);
-
-
             Console.WriteLine("Product added!");
 
 
@@ -127,12 +160,28 @@ public static class Order
 
                 if (string.IsNullOrWhiteSpace(supplierName))
                 {
-                    Console.WriteLine("Supplier name cannot be empty.");
+                    ShowError("Supplier name cannot be empty.");
                     return;
                 }
             }
             // Sparar leverantörens namn i orderobjektet.
             newOrder.SupplierName = supplierName;
+
+            // Minskar lagersaldot för varje produkt i en utgående order.
+            if (orderType == "Outgoing Order")
+            {
+                foreach (Product orderedProduct in orderedProductsList)
+                {
+                    // Hittar den riktiga produkten i lagerlistan.
+                    Product? storageProduct = appData.Products.FirstOrDefault(product =>
+                        product.ProductArticleNumber == orderedProduct.ProductArticleNumber);
+
+                    if (storageProduct != null)
+                    {
+                        storageProduct.ProductStockQuantity -= orderedProduct.OrderAmount;
+                    }
+                }
+            }
 
             // Lägger till den nya ordern i listan med alla order.
             appData.Orders.Add(newOrder);
@@ -143,7 +192,7 @@ public static class Order
 
 
             // Räknar ut totalsumman för hela ordern.
-            decimal totalOrderPrice = orderedProductsList.Sum(product => product.ProductPrice * product.ProductStockQuantity);
+            decimal totalOrderPrice = orderedProductsList.Sum(product => product.ProductPrice * product.OrderAmount);
 
 
 
@@ -165,9 +214,9 @@ public static class Order
             foreach (Product product in orderedProductsList)
             {
                 Console.WriteLine($"Product: {product.ProductName}");
-                Console.WriteLine($"Amount: {product.ProductStockQuantity}");
+                Console.WriteLine($"Amount: {product.OrderAmount}");
                 Console.WriteLine($"Price per product: {product.ProductPrice:F2} kr");
-                Console.WriteLine($"Total: {product.ProductPrice * product.ProductStockQuantity:F2} kr");
+                Console.WriteLine($"Total: {product.ProductPrice * product.OrderAmount:F2} kr");
                 Console.WriteLine("-----------------------------------");
             }
 
@@ -340,7 +389,6 @@ public static class Order
             }
 
             Console.WriteLine("Have you received an order confirmation from the supplier?");
-
             // Frågar användaren om bekräftelsen har mottagits.
             User.AskYesOrNo();
 
@@ -506,9 +554,9 @@ public static class Order
         foreach (Product product in selectedOrder.OrderedProductsList)
         {
             // F2 gör att priset visas med två decimaler.
-            Console.WriteLine($" - Product Name: {product.ProductName}, Amount: {product.ProductStockQuantity}, Price per Product: {product.ProductPrice:F2} kr");
+            Console.WriteLine($" - Product Name: {product.ProductName}, Amount: {product.OrderAmount}, Price per Product: {product.ProductPrice:F2} kr");
+            Console.WriteLine("-----------------------------------");
         }
-        Console.WriteLine("-----------------------------------");
 
 
 
@@ -682,6 +730,64 @@ public static class Order
 
 
 
+    public static void CheckOrderHistory()
+    {
+        Console.Clear();
+
+        // Hämtar data från json och sparar det i appData.
+        DataStorage dataStorage = new DataStorage();
+        AppData appData = dataStorage.Load();
+
+        // Gör en lista som innehåller alla ordrar i orderhistoriken.
+        List<OrderDetails> orderHistoryList = appData.OrderHistory;
+
+        // Kontrollera om det finns några tidigare ordrar.
+        if (orderHistoryList.Count == 0)
+        {
+            Console.WriteLine("No orders found in order history.");
+            return;
+        }
+
+
+        // Låter användaren välja vilken order den vill titta mer på.
+        OrderDetails selectedOrder = AnsiConsole.Prompt(new SelectionPrompt<OrderDetails>()
+            .Title("Choose an order:")
+            //UseConverter bestämmer hur varje order ska visas i menyn. Här visas ordernummer och status.
+            .UseConverter(order => $"Order #{order.OrderNumber} - {order.OrderStatus}")
+            .AddChoices(orderHistoryList));
+
+
+        // Visar mottagningsdatum om det finns.
+        if (selectedOrder.OrderReceivedDate != null)
+        {
+            Console.WriteLine($"Received Date: {selectedOrder.OrderReceivedDate:yyyy-MM-dd HH:mm}");
+        }
+
+        // Visar leverantör om det finns.
+        if (!string.IsNullOrEmpty(selectedOrder.SupplierName))
+        {
+            Console.WriteLine($"Supplier: {selectedOrder.SupplierName}");
+        }
+
+
+        // Visar information om ordern.
+        Console.WriteLine("-----------------------------------");
+        Console.WriteLine($"Order Number: {selectedOrder.OrderNumber}");
+        Console.WriteLine($"Order Type: {selectedOrder.OrderType}");
+        Console.WriteLine($"Order Status: {selectedOrder.OrderStatus}");
+        Console.WriteLine($"Order Date: {selectedOrder.OrderDate:yyyy-MM-dd HH:mm}");
+
+        // Visar produkterna i ordern.
+        foreach (Product product in selectedOrder.OrderedProductsList)
+        {
+            Console.WriteLine("-----------------------------------");
+            Console.WriteLine($"Product Name: {product.ProductName}");
+            Console.WriteLine($"Amount: {product.OrderAmount}");
+            Console.WriteLine($"Price per Product: {product.ProductPrice:F2} kr");
+            Console.WriteLine($"Total: {product.ProductPrice * product.OrderAmount:F2} kr");
+            Console.WriteLine("-----------------------------------");
+        }
+    }
 
 
 
@@ -689,33 +795,13 @@ public static class Order
 
 
 
-namespace Assignment_Group_Project.Scripts.Objects
-{
-// Representerar en enskild order.
-public class OrderDetails
-{
-    // Orderns unika nummer.
-    public int OrderNumber { get; set; }
 
-    // Orderns nuvarande status.
-    public string OrderStatus { get; set; } = "Packing";
 
-    // Datum då ordern skapades.
-    public DateTime OrderDate { get; set; }
-
-    // Datum då ordern togs emot.
-    public DateTime? OrderReceivedDate { get; set; }
-
-    // Leverantörens namn.
-    public string? SupplierName { get; set; }
-
-    // Håller reda på om leverantören har bekräftat ordern. False för att det ska vara standard när ordern skapas.
-    public bool SupplierConfirmed { get; set; } = false;
-
-    // Typ av order, t.ex "Incoming Order" eller "Outgoing Order".
-    public string? OrderType { get; set;}
-
-    // Produkterna som ingår i ordern.
-    public List<Product> OrderedProductsList { get; set; } = new();
-}
+    // Skriver ut error i röd text.
+    public static void ShowError (string message)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine(message);
+        Console.ResetColor();
+    }
 }

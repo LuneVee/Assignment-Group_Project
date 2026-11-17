@@ -27,8 +27,7 @@ namespace Assignment_Group_Project.Scripts.Statics
         //};
 
 
-        //Storage Menu version 0.1
-        public static void StorageMenu()
+        public static void LoadData()
         {
             while (true)
             {
@@ -37,6 +36,21 @@ namespace Assignment_Group_Project.Scripts.Statics
                 DataStorage dataStorage = new DataStorage();
                 AppData appData = dataStorage.Load();
 
+
+            //Load Products
+            DataStorage dataStorage = new DataStorage();
+            AppData appData = dataStorage.Load();
+
+        }
+
+
+        //Storage Menu version 0.1
+        public static void StorageMenu()
+        {
+            //Create Menu!
+            var StorageMenu = AnsiConsole
+                .Prompt(new SelectionPrompt<string>()
+                .AddChoices("Search Product", "Add Product to Storage List", "Update Product In Storage", "Remove Product from Storage List", "Back to Main Menu"));
 
                 var StorageMenu = AnsiConsole
                     .Prompt(new SelectionPrompt<string>()
@@ -59,6 +73,8 @@ namespace Assignment_Group_Project.Scripts.Statics
                     case "Remove Product from Storage List":
                         RemoveProductFromStorage();
                         break;
+                case "Back to Main Menu":
+                    return;
 
                     case "Storage History":
                         CheckStorageHistory();
@@ -72,6 +88,15 @@ namespace Assignment_Group_Project.Scripts.Statics
 
             }
         }//Back To Main Menu = Finished Running Task!
+
+
+        //Add Product To Storage!
+        public static void AddProduct()
+        {
+
+
+
+        }
 
 
         //Create Product version 0.1
