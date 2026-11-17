@@ -29,6 +29,13 @@ namespace Assignment_Group_Project.Scripts.Statics
 
         public static void LoadData()
         {
+            while (true)
+            {
+
+                //Load Products
+                DataStorage dataStorage = new DataStorage();
+                AppData appData = dataStorage.Load();
+
 
             //Load Products
             DataStorage dataStorage = new DataStorage();
@@ -45,29 +52,41 @@ namespace Assignment_Group_Project.Scripts.Statics
                 .Prompt(new SelectionPrompt<string>()
                 .AddChoices("Search Product", "Add Product to Storage List", "Update Product In Storage", "Remove Product from Storage List", "Back to Main Menu"));
 
-            switch (StorageMenu)
-            {
-                case "Search Product":
-                    SearchProductInStorage();
-                    break;
+                var StorageMenu = AnsiConsole
+                    .Prompt(new SelectionPrompt<string>()
+                    .AddChoices("Search Product", "Add Product to Storage List", "Update Product In Storage", "Remove Product from Storage List", "Storage History", "Back to Main Menu"));
 
-                case "Add Product to Storage List":
-                    AddProductToStorage();
-                    break;
+                switch (StorageMenu)
+                {
+                    case "Search Product":
+                        SearchProductInStorage();
+                        break;
 
-                case "Update Product In Storage":
-                    UpdateProductInStorage();
-                    break;
+                    case "Add Product to Storage List":
+                        AddProductToStorage();
+                        break;
 
-                case "Remove Product from Storage List":
-                    RemoveProductFromStorage();
-                    break;
+                    case "Update Product In Storage":
+                        UpdateProductInStorage();
+                        break;
 
+                    case "Remove Product from Storage List":
+                        RemoveProductFromStorage();
+                        break;
                 case "Back to Main Menu":
                     return;
 
-            }
+                    case "Storage History":
+                        CheckStorageHistory();
+                        break;
 
+                    case "Back to Main Menu":
+                        return;
+
+                }
+
+
+            }
         }//Back To Main Menu = Finished Running Task!
 
 
@@ -261,16 +280,16 @@ namespace Assignment_Group_Project.Scripts.Statics
                 {
                     AnsiConsole.MarkupLine($"[blue]Updating Product: {productToUpdate.ProductName}[/]");
                     Console.WriteLine("Enter new values (leave blank to keep current value):");
-                    
+
                     Console.Write($"Product Name ({productToUpdate.ProductName}): ");
-                    User.ReadInput();  
+                    User.ReadInput();
                     productToUpdate.ProductName = User.input;
 
                     Console.Write($"Product Price ({productToUpdate.ProductPrice}): ");
                     User.ReadInputDecimal();
                     productToUpdate.ProductPrice = User.inputDecimal;
 
-                    Console.Write($"Product Stock Quantity ({productToUpdate.ProductStockQuantity}): "); 
+                    Console.Write($"Product Stock Quantity ({productToUpdate.ProductStockQuantity}): ");
                     User.ReadInputInt();
                     productToUpdate.ProductStockQuantity = User.inputInt;
 
@@ -502,6 +521,84 @@ namespace Assignment_Group_Project.Scripts.Statics
             }
         }//Finished Running Task!
 
+
+        //
+        public static void AddToStorageHistory(string What_Product_Is_It, string What_Condition_It_Was_Added)
+        {
+
+            //Load Products
+            DataStorage dataStorage = new DataStorage();
+            AppData appData = dataStorage.Load();
+
+            DateTime When_This_Got_Added_To_History = DateTime.Now;
+
+
+
+            string PushText = ($"{When_This_Got_Added_To_History} | {What_Product_Is_It} | {What_Condition_It_Was_Added}");
+
+            appData.ProductHistory.Add(PushText);
+            dataStorage.Save(appData);
+
+
+
+        }
+
+
+        //
+        public static void CheckStorageHistory()
+        {
+            while (true)
+            {
+
+                //Load Products
+                DataStorage dataStorage = new DataStorage();
+                AppData appData = dataStorage.Load();
+
+                Console.Clear();
+
+                //Write.ProductHistory();
+
+                List<string> History = appData.ProductHistory.AsEnumerable().Reverse().ToList();                               //
+
+                var table = new Table();
+
+                table.AddColumn("Storage History!");
+
+                int foreachTime = 0;
+                foreach (string History_Action in History)
+                {
+                    if (foreachTime <= 10)
+                    {
+                        table.AddRow(History_Action);
+                    }
+                    else
+                    {
+                        break;
+                    }
+
+                }
+
+                //Create and write Table Window on the right side!
+                AnsiConsole.Write(new Align(table, HorizontalAlignment.Right));
+
+                Console.SetCursorPosition(0, 4);
+
+                var Option = AnsiConsole
+                    .Prompt(new SelectionPrompt<string>().AddChoices("Search: ", "Back To Storage Menu"));
+
+                switch (Option)
+                {
+                    case "Search: ":
+
+
+                        break;
+
+                    case "Back To Storage Menu":
+                        return;
+
+                }
+            }
+        }
 
     }
 }
