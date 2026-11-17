@@ -690,6 +690,10 @@ public static class Order
     {
         AnsiConsole.Clear();
 
+    public static void CheckOrderHistory()
+    {
+        AnsiConsole.Clear();
+
         // Hämtar data från json och sparar det i appData.
         DataStorage dataStorage = new DataStorage();
         AppData appData = dataStorage.Load();
@@ -704,6 +708,12 @@ public static class Order
             return;
         }
 
+        // Låter användaren välja vilken order den vill titta mer på.
+        OrderDetails selectedOrder = AnsiConsole.Prompt(new SelectionPrompt<OrderDetails>()
+            .Title("Choose an order:")
+            //UseConverter bestämmer hur varje order ska visas i menyn. Här visas ordernummer och status.
+            .UseConverter(order => $"Order #{order.OrderNumber} - {order.OrderStatus}")
+            .AddChoices(orderHistoryList));
 
         // Låter användaren välja vilken order den vill titta mer på.
         OrderDetails selectedOrder = AnsiConsole.Prompt(new SelectionPrompt<OrderDetails>()
