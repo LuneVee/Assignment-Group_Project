@@ -8,7 +8,7 @@ namespace Assignment_Group_Project.Scripts.Statics
         // Visar alla Leverantörer! 
         public static void AllSuppliers()
         {
-            AppData appData = new DataStorage().Load();
+            AppData appData = DataStorage.Load<AppData>("data.json");
 
             if (appData.Suppliers.Count == 0)
             {
@@ -25,7 +25,7 @@ namespace Assignment_Group_Project.Scripts.Statics
         // Sök på företagetsnamn 
         public static void Search()
         {
-            AppData appdata = new DataStorage().Load();
+            AppData appdata = DataStorage.Load<AppData>("data.json");
 
             Console.WriteLine("Search for a Supplier by name:");
             string searchName = Console.ReadLine() ?? "";
@@ -54,5 +54,56 @@ namespace Assignment_Group_Project.Scripts.Statics
                 Console.WriteLine(supplier.GetSummarySupplier());
             }
         }
+
+            // Frågar tills användaren skrivit något.
+                    private static string AskNotEmpty(string question)
+                    {
+                        while (true)
+                        {
+                            Console.Write(question);
+                            string answer = Console.ReadLine() ?? "";
+
+                            if (!string.IsNullOrWhiteSpace(answer))
+                            {
+                                return answer.Trim();
+                            }
+
+                            Console.WriteLine("This field cannot be empty. Try again.");
+                        }
+                    }
+
+                // Lägger till en ny leverantör.
+                public static void AddSupplier()
+                {
+                    AppData appData = DataStorage.Load<AppData>("data.json");
+
+                    string companyName = AskNotEmpty("Company name: ");
+
+                    // Nekar om namnet redan finns
+                    bool alreadyExists = appData.Suppliers.Any(s =>
+                        s.SupplierCompanyName != null &&
+                        s.SupplierCompanyName.Equals(companyName, StringComparison.OrdinalIgnoreCase));
+
+                    if (alreadyExists)
+                    {
+                        Console.WriteLine("A supplier with that name already exists.");
+                        return;
+                    }
+
+                    string email = AskNotEmpty("Email: ");
+                    string phoneNumber = AskNotEmpty("Phone number: ");
+
+                    Supplier newSupplier = new Supplier
+                    {
+                        SupplierCompanyName = companyName,
+                        Email = email,
+                        PhoneNumber = phoneNumber
+                    };
+
+                    appData.Suppliers.Add(newSupplier);
+                    DataStorage.Save("data.json", appData);
+
+                    Console.WriteLine("Supplier added!");
+                }
     }
 }

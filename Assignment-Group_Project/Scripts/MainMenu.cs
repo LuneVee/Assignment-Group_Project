@@ -21,7 +21,7 @@ namespace Assignment_Group_Project.Scripts
                 AnsiConsole.MarkupLine("[blue]Product Manager System[/]");
                 User.inputChoice = AnsiConsole.Prompt(new SelectionPrompt<string>()
                     .Title("Select an option:")
-                    .AddChoices(new[] { "Storage", "Orders", "End Program",}));
+                    .AddChoices(new[] { "Storage", "Orders", "Statistics", "Suppliers", "End Program" }));
 
 
                 switch (User.inputChoice)
@@ -34,6 +34,13 @@ namespace Assignment_Group_Project.Scripts
                     case "Orders":
                     Order.OrderMenu();
                         break;
+
+                    case "Statistics":
+                        Statistics.ShowOrderStatistics();
+                        break;
+                    case "Suppliers":
+                        CompanyMenu();
+                        break;
                     case "End Program":
                         runProgram = false;
                         break;
@@ -44,5 +51,52 @@ namespace Assignment_Group_Project.Scripts
                 }
             }
         }
+
+
+                    private static void CompanyMenu()
+                    {
+                    bool running = true;
+
+                     while (running)
+                {
+                    string choice = AnsiConsole.Prompt(
+                     new SelectionPrompt<string>()
+                    .Title("Supplier Menu")
+                    .AddChoices(
+                    "Show All Suppliers",
+                    "Search Supplier",
+                    "Add Supplier",
+                    "Back to Main Menu"
+                ));
+
+                 switch (choice)
+                {
+                     case "Show All Suppliers":
+                        Company.AllSuppliers();
+                         break;
+
+                    case "Search Supplier":
+                        Company.Search();
+                        break;
+                    
+                    case "Add Supplier":
+                        Company.AddSupplier();
+                        break;
+                   
+                    case "Back to Main Menu":
+                    running = false;
+                    break;
+                }
+
+                 if (running)
+                {
+                    Console.WriteLine("\nPress any key to continue...");
+                    Console.ReadKey();
+                    AnsiConsole.Clear();
+                    
+        }
+    }
+}
+
     }
 }
