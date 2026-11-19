@@ -15,8 +15,8 @@ public static class Order
         AnsiConsole.Clear();
 
         // Hämtar data från JSON-filen.
-        DataStorage dataStorage = new DataStorage();
-        AppData appData = dataStorage.Load();
+        
+        AppData appData = DataStorage.Load<AppData>("data.json");
 
         // Lista som sparar produkterna i ordern.
         List<Product> orderedProductsList = new();
@@ -183,7 +183,7 @@ public static class Order
         appData.Orders.Add(newOrder);
 
         // Sparar all data.
-        dataStorage.Save(appData);
+        DataStorage.Save("data.json", appData);
 
         // Räknar ut totalsumman för hela ordern.
         decimal totalOrderPrice = orderedProductsList.Sum(product => product.ProductPrice * product.OrderAmount);
@@ -258,8 +258,8 @@ public static class Order
         AnsiConsole.Clear();
 
         // Hämtar sparad data från JSON-filen.
-        DataStorage dataStorage = new DataStorage();
-        AppData appData = dataStorage.Load();
+        
+        AppData appData = DataStorage.Load<AppData>("data.json");
 
         // Hämtar alla aktiva ordrar, både Incoming och Outgoing.
         List<OrderDetails> allOrdersList = appData.Orders;
@@ -453,7 +453,7 @@ public static class Order
                 orderToUpdate.SupplierConfirmed = true;
 
                 // Sparar ändringen i JSON-filen.
-                dataStorage.Save(appData);
+                DataStorage.Save("data.json", appData);
 
                 AnsiConsole.MarkupLine("[green]Supplier confirmation successfully registered![/]");
             }
@@ -480,7 +480,7 @@ public static class Order
                 appData.OrderHistory.Add(orderToUpdate);
 
                 // Sparar ändringarna.
-                dataStorage.Save(appData);
+                DataStorage.Save("data.json", appData);
 
                 AnsiConsole.MarkupLine("[green]Order successfully deleted & moved to order history![/]");
             }
@@ -510,7 +510,7 @@ public static class Order
         }
 
         // Sparar ändringarna i JSON-filen.
-        dataStorage.Save(appData);
+        DataStorage.Save("data.json", appData);
     }
 
 
@@ -526,8 +526,8 @@ public static class Order
         AnsiConsole.Clear();
 
         // Hämtar sparad data från JSON-filen.
-        DataStorage dataStorage = new DataStorage();
-        AppData appData = dataStorage.Load();
+        
+        AppData appData = DataStorage.Load<AppData>("data.json");
 
 
         // Låter användaren välja vilken typ av order som ska visas.
@@ -648,7 +648,7 @@ public static class Order
                     appData.Orders.Remove(selectedOrder);
                     appData.OrderHistory.Add(selectedOrder);
 
-                    dataStorage.Save(appData);
+                    DataStorage.Save("data.json", appData);
 
                     AnsiConsole.MarkupLine("[green]Order successfully moved to order history![/]");
                 }
@@ -733,8 +733,8 @@ public static class Order
         AnsiConsole.Clear();
 
         // Hämtar data från json och sparar det i appData.
-        DataStorage dataStorage = new DataStorage();
-        AppData appData = dataStorage.Load();
+        
+        AppData appData = DataStorage.Load<AppData>("data.json");
 
         // Gör en lista som innehåller alla ordrar i orderhistoriken.
         List<OrderDetails> orderHistoryList = appData.OrderHistory;

@@ -11,7 +11,7 @@ namespace Assignment_Group_Project.Scripts.Statics
     {
         public static void ShowOrderStatistics()
         {
-            AppData appData = new DataStorage().Load();
+            AppData appData = DataStorage.Load<AppData>("data.json");
             
             var orders = appData.OrderHistory.Concat(appData.Orders).ToList();
 
@@ -35,13 +35,13 @@ namespace Assignment_Group_Project.Scripts.Statics
                 }
 
                 var groups = filteredOrders.GroupBy(order => GetPeriodLabel(order.OrderDate, selectedPeriod))
-                    .Select(group => new
-                    {
-                        TotalAmount = group.Sum(order => order.OrderedProductsList.Sum(product => product.ProductPrice * product.ProductStockQuantity)),
-                        Period = group.Key,
-                        TotalOrders = group.Count()
-                    })
-                    .OrderBy(group => group.Period)
+                .Select(group => new
+                {
+                    TotalAmount = group.Sum(order => order.OrderedProductsList.Sum(product => product.ProductPrice * product.OrderAmount)),
+                     Period = group.Key,
+                    TotalOrders = group.Count()
+         })
+                     .OrderBy(group => group.Period)
                     .ToList();
 
                     foreach (var group in groups)

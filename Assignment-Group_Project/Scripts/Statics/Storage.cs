@@ -86,8 +86,7 @@ namespace Assignment_Group_Project.Scripts.Statics
         {
 
             //Load Products
-            Load();
-
+           AppData appData = DataStorage.Load<AppData>("data.json");
             var Products = appData.Products;
 
             bool LoopTask = true;
@@ -248,8 +247,8 @@ namespace Assignment_Group_Project.Scripts.Statics
         public static void CreateNewProduct()
         {
             //Load Products
-            DataStorage dataStorage = new DataStorage();
-            AppData appData = dataStorage.Load();
+            
+            AppData appData = DataStorage.Load<AppData>("data.json");
 
             var Products = appData.Products;
 
@@ -372,7 +371,7 @@ namespace Assignment_Group_Project.Scripts.Statics
                             AnsiConsole.MarkupLine("[green]Product has now been added![/]");                //
 
                             // Sparar all data och den nya produkten i data.json.
-                            dataStorage.Save(appData);
+                            DataStorage.Save("data.json", appData);
 
                             AddToStorageHistory(Creating_Product_For_List.ProductName, "Added");                   //
                             Console.ReadKey();                                                              //
@@ -393,7 +392,7 @@ namespace Assignment_Group_Project.Scripts.Statics
                             (Creating_Product_For_List.ProductArticleNumber.ToString(), "Canceled");
 
                         // Sparar all data och den nya produkten i data.json.
-                        dataStorage.Save(appData);
+                        DataStorage.Save("data.json", appData);
 
                         AnsiConsole.MarkupLine("[yellow] Creating Product has been Canceled![/]");          //
                         Console.ReadKey();                                                                  //

@@ -768,6 +768,11 @@
       "SupplierCompanyName": "tennis company",
       "Email": "Info@tennis.se",
       "PhoneNumber": "070-1234567"
+    },
+    {
+      "SupplierCompanyName": "Ikea",
+      "Email": "Info@ikea.se",
+      "PhoneNumber": "031-123532"
     }
   ]
 }
