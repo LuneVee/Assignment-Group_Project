@@ -18,13 +18,13 @@ namespace Assignment_Group_Project.Scripts.Statics
             string selectedOrderType = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .Title("Select order type:")
-                    .AddChoices(new[] { "Outgoing Order", "Incoming Order" }));
+                    .AddChoices( "Outgoing Order", "Incoming Order" ));
 
             string selectedPeriod = AnsiConsole.Prompt(
                 
                 new SelectionPrompt<string>()
                     .Title("Select a period:")
-                    .AddChoices(new[] { "Day", "Week", "Month", "Quarter", "Half Year", "Year", "All time" }));
+                    .AddChoices("Day", "Week", "Month", "Quarter", "Half Year", "Year", "All time" ));
                     var filteredOrders = orders
                     .Where(order => order.OrderType == selectedOrderType && order.OrderStatus != "Cancelled")
                     .ToList();
@@ -48,6 +48,8 @@ namespace Assignment_Group_Project.Scripts.Statics
                     {
                         Console.WriteLine($"Period: {group.Period}, Total Amount: {group.TotalAmount:C}, Total Orders: {group.TotalOrders}");
                     }
+
+                    Console.ReadKey();
         }
         private static string GetPeriodLabel(DateTime date, string period)
         {

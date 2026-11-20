@@ -15,31 +15,42 @@ namespace Assignment_Group_Project.Scripts
         //Create and Run main menu! -<This is currently only a placeholder for the main menu>!
         public static void RunMenu()
         {
+
+            StartScreen();
+
             while (runProgram == true)
             {
+
+                Console.Clear();
+
+                Write.MainMenu();
 
                 AnsiConsole.MarkupLine("[blue]Product Manager System[/]");
                 User.inputChoice = AnsiConsole.Prompt(new SelectionPrompt<string>()
                     .Title("Select an option:")
-                    .AddChoices(new[] { "Storage", "Orders", "Statistics", "Suppliers", "End Program" }));
+                    .AddChoices( "Storage", "Orders", "Statistics", "Suppliers", "End Program" ));
 
 
                 switch (User.inputChoice)
                 {
 
                     case "Storage":
+                        Loading();
                         Storage.StorageMenu();
                         break;
 
                     case "Orders":
+                        Loading();
                     Order.OrderMenu();
                         break;
 
                     case "Statistics":
+                        Loading();
                         Statistics.ShowOrderStatistics();
                         break;
                     case "Suppliers":
-                        CompanyMenu();
+                        Loading();
+                        Company.CompanyMenu();
                         break;
                     case "End Program":
                         runProgram = false;
@@ -53,50 +64,45 @@ namespace Assignment_Group_Project.Scripts
         }
 
 
-                    private static void CompanyMenu()
-                    {
-                    bool running = true;
 
-                     while (running)
-                {
-                    string choice = AnsiConsole.Prompt(
-                     new SelectionPrompt<string>()
-                    .Title("Supplier Menu")
-                    .AddChoices(
-                    "Show All Suppliers",
-                    "Search Supplier",
-                    "Add Supplier",
-                    "Back to Main Menu"
-                ));
+        private static void StartScreen()
+        {
 
-                 switch (choice)
-                {
-                     case "Show All Suppliers":
-                        Company.AllSuppliers();
-                         break;
+            Write.TeamName();
+            Loading();
 
-                    case "Search Supplier":
-                        Company.Search();
-                        break;
-                    
-                    case "Add Supplier":
-                        Company.AddSupplier();
-                        break;
-                   
-                    case "Back to Main Menu":
-                    running = false;
-                    break;
-                }
-
-                 if (running)
-                {
-                    Console.WriteLine("\nPress any key to continue...");
-                    Console.ReadKey();
-                    AnsiConsole.Clear();
-                    
         }
-    }
-}
+
+
+        private static void Loading()
+        {
+            Random random = new Random();
+            double RanNumTask;
+            int RanNumThread;
+
+            Console.SetCursorPosition(5, 4);
+
+            AnsiConsole.Progress()
+                .Start(ctx =>
+                {
+                    // Create loading bar
+                    var task = ctx.AddTask("[green]Loading...[/]", maxValue: 100);
+
+                    // Increase progress until 100%
+                    while (!ctx.IsFinished)
+                    {
+                        RanNumTask = random.Next(0, 4);
+                        RanNumThread = random.Next(1, 2);
+
+                        task.Increment(RanNumTask);
+                        Thread.Sleep(RanNumThread);
+                    }
+                });
+
+        }
+
+
+
 
     }
 }
