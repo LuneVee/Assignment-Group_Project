@@ -28,7 +28,7 @@ namespace Assignment_Group_Project.Scripts
                 AnsiConsole.MarkupLine("[blue]Product Manager System[/]");
                 User.inputChoice = AnsiConsole.Prompt(new SelectionPrompt<string>()
                     .Title("Select an option:")
-                    .AddChoices(new[] { "Storage", "Orders", "Statistics", "Suppliers", "End Program" }));
+                    .AddChoices( "Storage", "Orders", "Statistics", "Suppliers", "End Program" ));
 
 
                 switch (User.inputChoice)

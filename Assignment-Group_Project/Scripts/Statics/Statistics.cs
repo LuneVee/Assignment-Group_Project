@@ -7,39 +7,24 @@ using Assignment_Group_Project.Scripts.Objects;
 
 namespace Assignment_Group_Project.Scripts.Statics
 {
-
-    // Visar statistik över ordrar, grupperade på en period (dag, vecka, månad osv.)
     static class Statistics
     {
-
-        // Visar antal ordrar och totalbelopp per period för vald ordertyp.
         public static void ShowOrderStatistics()
         {
-
-            // Hämtar all sparad data från data.json.
             AppData appData = DataStorage.Load<AppData>("data.json");
             
-
-            // Concat lägger ihop orderhistoriken och de aktiva ordrarna i en lista,
-            // så att både levererade och pågående ordrar räknas med.
             var orders = appData.OrderHistory.Concat(appData.Orders).ToList();
 
-
-            // Användaren väljer om utgående eller inkommande ordrar ska visas.
-            // De två texterna måste stämma exakt med OrderType i ordrarna.
             string selectedOrderType = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
                     .Title("Select order type:")
-                    .AddChoices(new[] { "Outgoing Order", "Incoming Order" }));
+                    .AddChoices( "Outgoing Order", "Incoming Order" ));
 
             string selectedPeriod = AnsiConsole.Prompt(
                 
                 new SelectionPrompt<string>()
                     .Title("Select a period:")
-                    .AddChoices(new[] { "Day", "Week", "Month", "Quarter", "Half Year", "Year", "All time" }));
-
-                    // Behåller bara ordrar av vald typ som inte är avbrutna.
-                    // && betyder "och", så båda villkoren måste stämma.
+                    .AddChoices("Day", "Week", "Month", "Quarter", "Half Year", "Year", "All time" ));
                     var filteredOrders = orders
                     .Where(order => order.OrderType == selectedOrderType && order.OrderStatus != "Cancelled")
                     .ToList();
@@ -63,10 +48,9 @@ namespace Assignment_Group_Project.Scripts.Statics
                     {
                         Console.WriteLine($"Period: {group.Period}, Total Amount: {group.TotalAmount:C}, Total Orders: {group.TotalOrders}");
                     }
-        }
 
-        // Ger en etikett för ett datum, beroende på vilken period som valts.
-        // Ordrar med samma etikett hamnar i samma grupp.
+                    Console.ReadKey();
+        }
         private static string GetPeriodLabel(DateTime date, string period)
         {
             switch (period)
@@ -75,8 +59,6 @@ namespace Assignment_Group_Project.Scripts.Statics
                 return date.ToString("yyyy-MM-dd");   
                 
                 case "Week":
-                // DayOfWeek räknar söndag som 0, 
-                // Formeln ger måndag 0, tisdag 1 ... söndag 6
                 int daysSinceMonday = ((int)date.DayOfWeek + 6) % 7;
                 var weekStart = date.AddDays(-daysSinceMonday);
                 var weekEnd = weekStart.AddDays(6);
