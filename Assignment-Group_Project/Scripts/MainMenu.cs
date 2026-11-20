@@ -15,8 +15,15 @@ namespace Assignment_Group_Project.Scripts
         //Create and Run main menu! -<This is currently only a placeholder for the main menu>!
         public static void RunMenu()
         {
+
+            StartScreen();
+
             while (runProgram == true)
             {
+
+                Console.Clear();
+
+                Write.MainMenu();
 
                 AnsiConsole.MarkupLine("[blue]Product Manager System[/]");
                 User.inputChoice = AnsiConsole.Prompt(new SelectionPrompt<string>()
@@ -28,17 +35,21 @@ namespace Assignment_Group_Project.Scripts
                 {
 
                     case "Storage":
+                        Loading();
                         Storage.StorageMenu();
                         break;
 
                     case "Orders":
+                        Loading();
                     Order.OrderMenu();
                         break;
 
                     case "Statistics":
+                        Loading();
                         Statistics.ShowOrderStatistics();
                         break;
                     case "Suppliers":
+                        Loading();
                         Company.CompanyMenu();
                         break;
                     case "End Program":
@@ -53,7 +64,45 @@ namespace Assignment_Group_Project.Scripts
         }
 
 
-                 
+
+        private static void StartScreen()
+        {
+
+            Write.TeamName();
+            Loading();
+
+        }
+
+
+        private static void Loading()
+        {
+            Random random = new Random();
+            double RanNumTask;
+            int RanNumThread;
+
+            Console.SetCursorPosition(5, 4);
+
+            AnsiConsole.Progress()
+                .Start(ctx =>
+                {
+                    // Create loading bar
+                    var task = ctx.AddTask("[green]Loading...[/]", maxValue: 100);
+
+                    // Increase progress until 100%
+                    while (!ctx.IsFinished)
+                    {
+                        RanNumTask = random.Next(0, 4);
+                        RanNumThread = random.Next(1, 2);
+
+                        task.Increment(RanNumTask);
+                        Thread.Sleep(RanNumThread);
+                    }
+                });
+
+        }
+
+
+
 
     }
 }
