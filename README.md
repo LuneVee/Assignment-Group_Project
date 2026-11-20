@@ -10,17 +10,17 @@ Allt som görs i programmet lagras och försvinner inte när du avslutar program
 
 ## Skärmbilder.
 
-Här visas huvudmenyn
+### Här visas huvudmenyn
 ![Main menu](image.png)
-Storage meny
+### Storage meny
 ![Storage menu](image-1.png)
-Order meny
+### Order meny
 ![Order menu](image-2.png)
-Uppdatera order
+### Uppdatera order
 ![Update Order feature](image-3.png)
-En av statistik
+### En av statistik
 ![En av statestik alternativen.](image-4.png)
-Leverantör meny
+### Leverantör meny
 ![Supplier menu](image-5.png)
 
 ## Körinstruktioner.
