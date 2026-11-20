@@ -9,7 +9,6 @@ public static class Order
 
     // string orderType bedtyder att man kan skriva in en string som parameter när man anropar metoden.
     // Så att man kan använda metoden flera gånger med olika strings.
-    
     private static void CreateOrder(string orderType)
     {
         AnsiConsole.Clear();
@@ -36,7 +35,7 @@ public static class Order
             OrderType = orderType,
         };
 
-        AnsiConsole.Write(new Rule($"Starting {Markup.Escape(orderType)}"));
+        AnsiConsole.Write(new Rule($"Starting {orderType}"));
 
         bool addingMoreProducts = true;
 
@@ -45,26 +44,16 @@ public static class Order
             Product newProduct = new();
 
             // Frågar efter produktens namn med Spectre.Console.
-            newProduct.ProductName = AnsiConsole.Prompt(
-                new TextPrompt<string>("Enter the name of the product:")
-                    .AllowEmpty());
+            newProduct.ProductName = AnsiConsole.Prompt(new TextPrompt<string>("Enter the name of the product:")); 
 
-            if (string.IsNullOrWhiteSpace(newProduct.ProductName))
-            {
-                ShowError("Product name cannot be empty");
-                continue;
-            }
 
             // Kontrollerar att produkten finns i lagret för utgående ordrar.
             Product? existingProduct = null;
 
             if (orderType == "Outgoing Order")
             {
-                existingProduct = appData.Products.FirstOrDefault(product =>
-                    product.ProductName != null &&
-                    product.ProductName.Equals(
-                        newProduct.ProductName,
-                        StringComparison.OrdinalIgnoreCase));
+                existingProduct = appData.Products.FirstOrDefault(product =>product.ProductName != null &&product.ProductName.Equals(
+                newProduct.ProductName,StringComparison.OrdinalIgnoreCase));
 
                 if (existingProduct == null)
                 {
@@ -77,8 +66,7 @@ public static class Order
             }
 
             // Frågar efter antal.
-            string amountInput = AnsiConsole.Prompt(
-                new TextPrompt<string>("Amount of product:"));
+            string amountInput = AnsiConsole.Prompt(new TextPrompt<string>("Amount of product:"));
 
             if (!int.TryParse(amountInput, out int amount) || amount <= 0)
             {
@@ -92,8 +80,8 @@ public static class Order
             {
                 // Räknar hur många exemplar av samma produkt som redan finns i ordern.
                 int alreadyOrdered = orderedProductsList
-                    .Where(product => product.ProductArticleNumber == existingProduct!.ProductArticleNumber)
-                    .Sum(product => product.OrderAmount);
+                .Where(product => product.ProductArticleNumber == existingProduct!.ProductArticleNumber)
+                .Sum(product => product.OrderAmount);
 
                 // Räknar ut hur många exemplar som fortfarande är tillgängliga.
                 int availableQuantity = existingProduct!.ProductStockQuantity - alreadyOrdered;
@@ -107,8 +95,7 @@ public static class Order
             }
 
             // Frågar efter pris per produkt.
-            string priceInput = AnsiConsole.Prompt(
-                new TextPrompt<string>("Enter price per product:"));
+            string priceInput = AnsiConsole.Prompt(new TextPrompt<string>("Enter price per product:"));
 
             if (!decimal.TryParse(priceInput, out decimal price) || price <= 0)
             {
@@ -149,9 +136,7 @@ public static class Order
 
         if (orderType == "Incoming Order")
         {
-            supplierName = AnsiConsole.Prompt(
-                new TextPrompt<string>("Enter supplier company name:")
-                    .AllowEmpty());
+            supplierName = AnsiConsole.Prompt(new TextPrompt<string>("Enter supplier company name:"));
 
             if (string.IsNullOrWhiteSpace(supplierName))
             {
@@ -169,8 +154,7 @@ public static class Order
             foreach (Product orderedProduct in orderedProductsList)
             {
                 // Hittar den riktiga produkten i lagerlistan.
-                Product? storageProduct = appData.Products.FirstOrDefault(product =>
-                    product.ProductArticleNumber == orderedProduct.ProductArticleNumber);
+                Product? storageProduct = appData.Products.FirstOrDefault(product =>product.ProductArticleNumber == orderedProduct.ProductArticleNumber);
 
                 if (storageProduct != null)
                 {
@@ -206,14 +190,14 @@ public static class Order
         // Skapar information om ordern.
         var orderInfo = new List<string>
         {
-            $"Order Type: {Markup.Escape(orderType)}",
+            $"Order Type: {orderType}",
             $"Order Number: {orderNumber}",
             $"Order Date: {orderDate:yyyy-MM-dd HH:mm}"
         };
 
         if (orderType == "Incoming Order")
         {
-            orderInfo.Add($"Supplier: {Markup.Escape(supplierName)}");
+            orderInfo.Add($"Supplier: {supplierName}");
         }
 
         // Skapar en panel som visar produkterna.
@@ -349,7 +333,7 @@ public static class Order
 
         if (!string.IsNullOrEmpty(orderToUpdate.SupplierName))
         {
-            orderInfo.Add($"Supplier: {Markup.Escape(orderToUpdate.SupplierName)}");
+            orderInfo.Add($"Supplier: {orderToUpdate.SupplierName}");
         }
 
         if (orderToUpdate.OrderType == "Incoming Order")
@@ -373,11 +357,9 @@ public static class Order
             productInfo.Add($"Amount: {product.OrderAmount}");
             productInfo.Add($"Price per Product: {product.ProductPrice:F2} kr");
             productInfo.Add($"Total: {product.ProductPrice * product.OrderAmount:F2} kr");
-            productInfo.Add("");
         }
 
-        decimal totalOrderPrice = orderToUpdate.OrderedProductsList.Sum(
-            product => product.ProductPrice * product.OrderAmount);
+        decimal totalOrderPrice = orderToUpdate.OrderedProductsList.Sum(product => product.ProductPrice * product.OrderAmount);
 
         productInfo.Add($"[bold green]TOTAL: {totalOrderPrice:F2} kr[/]");
 
@@ -506,7 +488,7 @@ public static class Order
         }
         else
         {
-            AnsiConsole.MarkupLine($"[green]Order status updated to: {Markup.Escape(selectedOption)}[/]");
+            AnsiConsole.MarkupLine($"[green]Order status updated to: {selectedOption}[/]");
         }
 
         // Sparar ändringarna i JSON-filen.
@@ -560,7 +542,7 @@ public static class Order
         .Title("Choose an order:")
         //.UseConverter bestämmer hur varje order ska visas i menyn. Här visas ordernummer och status.
         .UseConverter(order => $"Order #{order.OrderNumber} - {order.OrderStatus}")
-        //.AddChoices(selectedOrders) lägger till alla order i den filtrerade listan som valbara alternativ.
+        //.AddChoices lägger till alla order i den filtrerade listan som valbara alternativ.
         .AddChoices(selectedOrdersList));
 
         
@@ -569,15 +551,15 @@ public static class Order
         var orderInfo = new List<string>
         {
             $"Order Number: {selectedOrder.OrderNumber}",
-            $"Order Type: {Markup.Escape(selectedOrder.OrderType ?? "-")}",
-            $"Order Status: {Markup.Escape(selectedOrder.OrderStatus)}",
+            $"Order Type: {selectedOrder.OrderType}",
+            $"Order Status: {selectedOrder.OrderStatus}",
             $"Order Date: {selectedOrder.OrderDate:yyyy-MM-dd HH:mm}"
         };
 
         // Visar leverantörens namn om det finns.
         if (!string.IsNullOrEmpty(selectedOrder.SupplierName))
         {
-            orderInfo.Add($"Supplier: {Markup.Escape(selectedOrder.SupplierName)}");
+            orderInfo.Add($"Supplier: {selectedOrder.SupplierName}");
         }
 
         // Visar om leverantören har bekräftat en Incoming Order.
@@ -599,11 +581,10 @@ public static class Order
         foreach (Product product in selectedOrder.OrderedProductsList)
         {
             // F2 gör att priset visas med två decimaler.
-            productInfo.Add($"Product Name: {Markup.Escape(product.ProductName ?? "-")}");
+            productInfo.Add($"Product Name: {product.ProductName}");
             productInfo.Add($"Amount: {product.OrderAmount}");
             productInfo.Add($"Price per Product: {product.ProductPrice:F2} kr");
             productInfo.Add($"Total: {product.ProductPrice * product.OrderAmount:F2} kr");
-            productInfo.Add("");
         }
 
         // Skapar en panel som visar produkterna.
@@ -617,7 +598,7 @@ public static class Order
 
 
         // Skapa menyvalen som användaren kan välja mellan.
-        List<string> choices = new List<string>();
+        List<string> choices = new();
 
         // Visa bara Mark as Delivered om ordern har skickats.
         if (selectedOrder.OrderStatus == "Shipped")
@@ -758,8 +739,8 @@ public static class Order
         var orderInfo = new List<string>
         {
             $"Order Number: {selectedOrder.OrderNumber}",
-            $"Order Type: {Markup.Escape(selectedOrder.OrderType ?? "")}",
-            $"Order Status: {Markup.Escape(selectedOrder.OrderStatus)}",
+            $"Order Type: {selectedOrder.OrderType}",
+            $"Order Status: {selectedOrder.OrderStatus}",
             $"Order Date: {selectedOrder.OrderDate:yyyy-MM-dd HH:mm}"
         };
 
@@ -772,7 +753,7 @@ public static class Order
         // Visar leverantör om det finns.
         if (!string.IsNullOrEmpty(selectedOrder.SupplierName))
         {
-            orderInfo.Add($"Supplier: {Markup.Escape(selectedOrder.SupplierName)}");
+            orderInfo.Add($"Supplier: {selectedOrder.SupplierName}");
         }
 
         AnsiConsole.Write(new Rule("[green]ORDER HISTORY[/]"));
@@ -782,11 +763,10 @@ public static class Order
 
         foreach (Product product in selectedOrder.OrderedProductsList)
         {
-            productInfo.Add($"Product Name: {Markup.Escape(product.ProductName ?? "-")}");
+            productInfo.Add($"Product Name: {product.ProductName}");
             productInfo.Add($"Amount: {product.OrderAmount}");
             productInfo.Add($"Price per Product: {product.ProductPrice:F2} kr");
             productInfo.Add($"Total: {product.ProductPrice * product.OrderAmount:F2} kr");
-            productInfo.Add("");
         }
 
         // Skapar en panel som visar produkterna.
