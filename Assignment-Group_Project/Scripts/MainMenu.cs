@@ -39,7 +39,7 @@ namespace Assignment_Group_Project.Scripts
                         Statistics.ShowOrderStatistics();
                         break;
                     case "Suppliers":
-                        CompanyMenu();
+                        Company.CompanyMenu();
                         break;
                     case "End Program":
                         runProgram = false;
@@ -53,50 +53,7 @@ namespace Assignment_Group_Project.Scripts
         }
 
 
-                    private static void CompanyMenu()
-                    {
-                    bool running = true;
-
-                     while (running)
-                {
-                    string choice = AnsiConsole.Prompt(
-                     new SelectionPrompt<string>()
-                    .Title("Supplier Menu")
-                    .AddChoices(
-                    "Show All Suppliers",
-                    "Search Supplier",
-                    "Add Supplier",
-                    "Back to Main Menu"
-                ));
-
-                 switch (choice)
-                {
-                     case "Show All Suppliers":
-                        Company.AllSuppliers();
-                         break;
-
-                    case "Search Supplier":
-                        Company.Search();
-                        break;
-                    
-                    case "Add Supplier":
-                        Company.AddSupplier();
-                        break;
-                   
-                    case "Back to Main Menu":
-                    running = false;
-                    break;
-                }
-
-                 if (running)
-                {
-                    Console.WriteLine("\nPress any key to continue...");
-                    Console.ReadKey();
-                    AnsiConsole.Clear();
-                    
-        }
-    }
-}
+                 
 
     }
 }

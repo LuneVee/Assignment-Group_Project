@@ -1,13 +1,17 @@
 using Assignment_Group_Project.Scripts.Objects;
+using Spectre.Console;
 
 namespace Assignment_Group_Project.Scripts.Statics
 {
+    // Hanterar leverantörer: visa alla, söka, lägga till och menyn för dem.
     public static class Company
     {
 
-        // Visar alla Leverantörer! 
+        // visar alla leverantör. 
         public static void AllSuppliers()
         {
+
+            // Hämtar all sparad data från data.json.
             AppData appData = DataStorage.Load<AppData>("data.json");
 
             if (appData.Suppliers.Count == 0)
@@ -25,9 +29,14 @@ namespace Assignment_Group_Project.Scripts.Statics
         // Sök på företagetsnamn 
         public static void Search()
         {
+
+            // Hämtar all sparad data från data.json till appdata.
             AppData appdata = DataStorage.Load<AppData>("data.json");
 
             Console.WriteLine("Search for a Supplier by name:");
+
+             // ReadLine kan ge null om inget kan läsas, så ?? "" gör att vi
+             // får en tom text i stället för null.
             string searchName = Console.ReadLine() ?? "";
 
 
@@ -38,6 +47,9 @@ namespace Assignment_Group_Project.Scripts.Statics
                 return;
             }
 
+
+            // Where plockar ut de leverantörer där villkoret stämmer.
+            // s är en leverantör i listan, och villkoret kollas för varje s.
             List<Supplier> matches = appdata.Suppliers
                 .Where(s => s.SupplierCompanyName != null && 
                  s.SupplierCompanyName.Contains(searchName, StringComparison.OrdinalIgnoreCase))
@@ -55,7 +67,8 @@ namespace Assignment_Group_Project.Scripts.Statics
             }
         }
 
-            // Frågar tills användaren skrivit något.
+            // Frågar tills användaren skrivit något. Används för alla tre fälten
+            // så att samma loop inte behöver skrivas tre gånger.
                     private static string AskNotEmpty(string question)
                     {
                         while (true)
@@ -75,6 +88,8 @@ namespace Assignment_Group_Project.Scripts.Statics
                 // Lägger till en ny leverantör.
                 public static void AddSupplier()
                 {
+
+                    // Hämtar all sparad data från data.json.
                     AppData appData = DataStorage.Load<AppData>("data.json");
 
                     string companyName = AskNotEmpty("Company name: ");
@@ -100,10 +115,57 @@ namespace Assignment_Group_Project.Scripts.Statics
                         PhoneNumber = phoneNumber
                     };
 
+                    // Lägger leverantören i listan och sparar direkt i data.json.
                     appData.Suppliers.Add(newSupplier);
                     DataStorage.Save("data.json", appData);
 
                     Console.WriteLine("Supplier added!");
                 }
+
+                // Menyn för leverantörer. Körs tills användaren väljer att gå tillbaka.
+                   public static void CompanyMenu()
+                    {
+                    bool running = true;
+
+                     while (running)
+                {
+                    string choice = AnsiConsole.Prompt(
+                     new SelectionPrompt<string>()
+                    .Title("Supplier Menu")
+                    .AddChoices(
+                    "Show All Suppliers",
+                    "Search Supplier",
+                    "Add Supplier",
+                    "Back to Main Menu"
+                ));
+
+                 switch (choice)
+                {
+                     case "Show All Suppliers":
+                        Company.AllSuppliers();
+                         break;
+
+                    case "Search Supplier":
+                        Company.Search();
+                        break;
+                    
+                    case "Add Supplier":
+                        Company.AddSupplier();
+                        break;
+                   
+                    case "Back to Main Menu":
+                    running = false;
+                    break;
+                }
+
+                 if (running)
+                {
+                    Console.WriteLine("\nPress any key to continue...");
+                    Console.ReadKey();
+                    AnsiConsole.Clear();
+                    
+        }
+    }
+}
     }
 }
