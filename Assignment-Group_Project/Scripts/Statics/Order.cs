@@ -13,6 +13,8 @@ public static class Order
     {
         AnsiConsole.Clear();
 
+        Write.CreateOrder();
+
         // Hämtar data från JSON-filen.
         
         AppData appData = DataStorage.Load<AppData>("data.json");
@@ -244,6 +246,8 @@ public static class Order
         // Hämtar sparad data från JSON-filen.
         
         AppData appData = DataStorage.Load<AppData>("data.json");
+
+        Write.UpdateOrder();
 
         // Hämtar alla aktiva ordrar, både Incoming och Outgoing.
         List<OrderDetails> allOrdersList = appData.Orders;
@@ -512,6 +516,9 @@ public static class Order
         AppData appData = DataStorage.Load<AppData>("data.json");
 
 
+        Write.CheckOrders();
+
+
         // Låter användaren välja vilken typ av order som ska visas.
         string selectedOrderType = AnsiConsole.Prompt(
         // SelectionPromt gör en meny.    
@@ -661,7 +668,9 @@ public static class Order
         {
             Console.Clear();
 
-            string choice = AnsiConsole.Prompt(new SelectionPrompt<string>().Title("Order Menu")
+            Write.OrderMenu();
+
+            string choice = AnsiConsole.Prompt(new SelectionPrompt<string>().Title("")
                     .AddChoices(
                         "Check Orders",
                         "Check Order History",
@@ -716,6 +725,8 @@ public static class Order
         // Hämtar data från json och sparar det i appData.
         
         AppData appData = DataStorage.Load<AppData>("data.json");
+
+        Write.CheckOrderHistory();
 
         // Gör en lista som innehåller alla ordrar i orderhistoriken.
         List<OrderDetails> orderHistoryList = appData.OrderHistory;
