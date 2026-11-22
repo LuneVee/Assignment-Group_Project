@@ -11,71 +11,68 @@ namespace Assignment_Group_Project.Scripts.Statics
     static class Storage
     {
 
-        //static List<Product> ProductList = new List<Product>()
-        //{
-        //    // Example product in List!
-        //    new Product()
-        //    {
-        //        ProductArticleNumber = 1,
-        //        ProductName = "Product 1",
-        //        ProductPrice = 10.99m,
-        //        ProductStockQuantity = 100,
-        //        SupplierName = "Supplier A",
-        //        AddOrderDate = DateTime.Now.AddDays(-5),
-        //        tagsList = new List<string> { "tag1", "tag2", "etsetra" },
-        //    },
-
-        //};
-
         //Load from 'Products.json' file!
+        //private static List<Product> Products = Load<Product>("data.json");
+        private static List<Product> Products = new List<Product>();
+        //private static List<ProductHistory> ProductHistoryRef = Load<ProductHistory>("data.json");
+        private static List<ProductHistory> ProductHistoryRef = new List<ProductHistory>();
 
-        private static List<Product> Products = DataStorage.Load<List<Product>>("Products.json");
-        private static List<string> ProductHistory = DataStorage.Load<List<string>>("ProductHistory.json");
+        //Load
+        //private static List<T> Load<T>(string json_File_Name)
+        //{
+        //    var Variable = DataStorage.Load<List<T>>(json_File_Name);
+        //    return Variable;
 
-        private static void Load()
-        {
-            Products = DataStorage.Load<List<Product>>("Products.json");
-            ProductHistory = DataStorage.Load<List<string>>("ProductHistory.json");
-        }
+        //}
 
         //Storage Menu version 0.1
         public static void StorageMenu()
         {
-            Console.Clear();
-
-            //Create Menu!
-
-            Write.StorageMenu();
-
-            var StorageMenu = AnsiConsole
-                .Prompt(new SelectionPrompt<string>()
-                .AddChoices
-                ("Search Product", "Add Product to Storage List", "Update Product In Storage", "Remove Product from Storage List", "Storage History", "Back to Main Menu"));
-
-            switch (StorageMenu)
+            while (true)
             {
-                case "Search Product":
-                    SearchProductInStorage();
-                    break;
 
-                case "Add Product to Storage List":
-                    AddProduct();
-                    break;
+                Console.Clear();
 
-                case "Update Product In Storage":
-                    UpdateProductInStorage();
-                    break;
+                //Create Menu!
 
-                case "Remove Product from Storage List":
-                    RemoveProductFromStorage();
-                    break;
+                Write.StorageMenu();
 
-                case "Storage History":
-                    CheckStorageHistory();
-                    break;
+                var StorageMenu = AnsiConsole
+                    .Prompt(new SelectionPrompt<string>()
+                    .AddChoices
+                    ("Search Product",
+                    "Add Product to Storage List",
+                    "Update Product In Storage",
+                    "Remove Product from Storage List",
+                    "Storage History",
+                    "Back to Main Menu"));
 
-                case "Back to Main Menu":
-                    return;
+                switch (StorageMenu)
+                {
+                    case "Search Product":
+                        SearchProductInStorage();
+                        break;
+
+                    case "Add Product to Storage List":
+                        AddProduct();
+                        break;
+
+                    case "Update Product In Storage":
+                        UpdateProductInStorage();
+                        break;
+
+                    case "Remove Product from Storage List":
+                        RemoveProductFromStorage();
+                        break;
+
+                    case "Storage History":
+                        CheckStorageHistory();
+                        break;
+
+                    case "Back to Main Menu":
+                        return;
+
+                }
 
             }
         }//Back To Main Menu = Finished Running Task!
@@ -86,7 +83,7 @@ namespace Assignment_Group_Project.Scripts.Statics
         {
 
             //Load Products
-           AppData appData = DataStorage.Load<AppData>("data.json");
+            AppData appData = DataStorage.Load<AppData>("data.json");
             var Products = appData.Products;
 
             bool LoopTask = true;
@@ -99,8 +96,8 @@ namespace Assignment_Group_Project.Scripts.Statics
 
                 table.AddColumn("Product     ");                                                            //Product Name!
                 table.AddColumn("Artical ");                                                                //Artical Number!
-                table.AddColumn("Quantity");                                                                //Stock Quantity!
-                table.AddColumn("Price       ");                                                            //Price Per Product!
+                //table.AddColumn("Quantity");                                                                //Stock Quantity!
+                //table.AddColumn("Price       ");                                                            //Price Per Product!
                 table.AddColumn("Company     ");                                                            //Company Suppliers!
 
                 Console.Clear();
@@ -108,7 +105,13 @@ namespace Assignment_Group_Project.Scripts.Statics
                 //For index 0 to 9 in Products, add to table row!
                 for (int i = 0; i < Math.Min(Products.Count, 10); i++)
                 {
-                    table.AddRow(Products[i].ProductName.ToString(), Products[i].ProductArticleNumber.ToString(), Products[i].ProductStockQuantity.ToString(), Products[i].ProductPrice.ToString(), Products[i].SupplierName.ToString());
+                    table.AddRow(
+                        Products[i].ProductName!.ToString(),
+                        Products[i].ProductArticleNumber.ToString(),
+                        //Products[i].ProductStockQuantity.ToString(),
+                        //Products[i].ProductPrice.ToString(),
+                        Products[i].SupplierName!.ToString()
+                        );
                 }
 
                 Write.CreatingProduct();
@@ -123,7 +126,7 @@ namespace Assignment_Group_Project.Scripts.Statics
                 AnsiConsole.MarkupLine("[blue] Create Artical Number\n then Create Product![/]\n");
                 try
                 {
-                    User.inputInt = int.Parse(User.ReadLineAsIntRange("[cyan]  Enter a Artical Number[/]:", 7));
+                    User.inputInt = int.Parse(User.ReadLineAsIntRange("[cyan]  Enter a Artical Number[/]:", 7)!);
                 }
                 catch
                 {
@@ -138,22 +141,7 @@ namespace Assignment_Group_Project.Scripts.Statics
                 {
                     Console.SetCursorPosition(((int)Console.WindowWidth - 70), 4);
 
-                    //
-                    for (int i = 0; i < 30; i++)
-                    {
-                        try
-                        {
-                            for (int s = 0; s < 70; s++)
-                            {
-                                AnsiConsole.Markup(" ");
-                            }
-                            Console.SetCursorPosition(((int)Console.WindowWidth - 70), Console.CursorTop + 1);
-                        }
-                        catch
-                        {
-                            break;
-                        }
-                    }
+                    ClearRightSideOfWindow();
 
                     Console.SetCursorPosition(((int)User.cursorPosition.X), ((int)User.cursorPosition.Y + 1));
 
@@ -169,11 +157,11 @@ namespace Assignment_Group_Project.Scripts.Statics
 
                     //Add Product and show its info!
                     table
-                        .AddRow(Existing_Artical_Number.ProductName.ToString(),
+                        .AddRow(Existing_Artical_Number.ProductName!.ToString(),
                         Existing_Artical_Number.ProductArticleNumber.ToString(),
                         Existing_Artical_Number.ProductStockQuantity.ToString(),
                         Existing_Artical_Number.ProductPrice.ToString(),
-                        Existing_Artical_Number.SupplierName.ToString());
+                        Existing_Artical_Number.SupplierName!.ToString());
 
                     //Create and write Table Window on the right side!
                     AnsiConsole.Write(new Align(table, HorizontalAlignment.Right));
@@ -247,21 +235,17 @@ namespace Assignment_Group_Project.Scripts.Statics
         public static void CreateNewProduct()
         {
             //Load Products
-            
             AppData appData = DataStorage.Load<AppData>("data.json");
-
             var Products = appData.Products;
-
-            AddToStorageHistory(User.inputInt.ToString(), "Creating");
 
             //Create and set defualt values on Creating_Product_For_List!
             Product Creating_Product_For_List = new Product();                                              //Create as a Product ref!
 
-            Creating_Product_For_List.ProductName = "";                                                            //Set Product Name!
-            Creating_Product_For_List.ProductArticleNumber = User.inputInt;                                        //Set Product Artical Number!
-            Creating_Product_For_List.ProductStockQuantity = 0;                                                    //Set Product Stock Quantity!
-            Creating_Product_For_List.ProductPrice = 0;                                                            //Set Product Price!
-            Creating_Product_For_List.SupplierName = "";                                                        //Set Product Supplier!
+            Creating_Product_For_List.ProductName = "";                                                     //Set Product Name!
+            Creating_Product_For_List.ProductArticleNumber = User.inputInt;                                 //Set Product Artical Number!
+            Creating_Product_For_List.ProductStockQuantity = 0;                                             //Set Product Stock Quantity!
+            Creating_Product_For_List.ProductPrice = 0;                                                     //Set Product Price!
+            Creating_Product_For_List.SupplierName = "";                                                    //Set Product Supplier!
 
             //Dictionary!
             Dictionary<string, bool> Product_Info_That_Is_Created = new Dictionary<string, bool>()          //A Dictionary of Conditions!
@@ -291,11 +275,11 @@ namespace Assignment_Group_Project.Scripts.Statics
                 table.AddColumn("Company     ");                                                            //Company Suppliers!
 
                 table.                                                                                      //
-                    AddRow(Creating_Product_For_List.ProductName.ToString(),                                       //
-                    Creating_Product_For_List.ProductArticleNumber.ToString(),                                     //
-                    Creating_Product_For_List.ProductStockQuantity.ToString(),                                     //
-                    Creating_Product_For_List.ProductPrice.ToString(),                                             //
-                    Creating_Product_For_List.SupplierName.ToString());                                         //
+                    AddRow(Creating_Product_For_List.ProductName.ToString(),                                //
+                    Creating_Product_For_List.ProductArticleNumber.ToString("D7"),                          //
+                    Creating_Product_For_List.ProductStockQuantity.ToString(),                              //
+                    Creating_Product_For_List.ProductPrice.ToString(),                                      //
+                    Creating_Product_For_List.SupplierName.ToString());                                     //
 
                 //Create and write Table Window on the right side!
                 AnsiConsole.Write(new Align(table, HorizontalAlignment.Right));                             //Create and write Table Window on the right side!
@@ -310,45 +294,153 @@ namespace Assignment_Group_Project.Scripts.Statics
                 }
 
                 //Set Cursor Position!
-                Console.SetCursorPosition(((int)User.cursorPosition.X), ((int)User.cursorPosition.Y + 4));  //
+                Console.SetCursorPosition(((int)User.cursorPosition.X), ((int)User.cursorPosition.Y + 5));  //
 
                 var Create_Product_Options = AnsiConsole                                                    //
                     .Prompt(new SelectionPrompt<string>()                                                   //
                     .AddChoices                                                                             //
-                    ("Product Name", "Product Price", "Product Stock Quantity", "Product Supplier Name", "Add Tag", "Confirm Product", "Cancel Product"));
+                    ("Product Name", "Product Price", "Product Stock Quantity", "Product Supplier Name", "Add Tag", "Remove Tag", "Confirm Product", "Cancel Product"));
 
                 //
                 switch (Create_Product_Options)                                                             //
                 {
+                    //Product Name!
                     case "Product Name":                                                                    //
-                        User.ReadInput();                                                                   //Read User Input!
-                        Creating_Product_For_List.ProductName = User.input;                                        //Set Product_Info_That_Is_Created Product Name to the same as User Input! 
-                        Product_Info_That_Is_Created["Name"] = true;                                        //Set Condition to true!
+                        User.input = User.ReadLineRange("[cyan]  Set Name:[/]", 30);                        //Read User Input!
+                        try
+                        {
+                            if (User.input == null)
+                            {
+                                break;
+                            }
+                            Creating_Product_For_List.ProductName = User.input;                             //Set Product_Info_That_Is_Created Product Name to the same as User Input! 
+                            Product_Info_That_Is_Created["Name"] = true;                                    //Set Condition to true!
+                        }
+                        catch
+                        {
+                            AnsiConsole.MarkupLine("[red]  Invalid input![/]");                             //Write this text if input is invalid!
+                            Product_Info_That_Is_Created["Name"] = false;                                   //Set Condition to false!
+                            Console.ReadKey();                                                              //
+                        }
                         break;
 
+                    //Product Price!
                     case "Product Price":                                                                   //
-                        User.ReadInputInt();                                                               //
-                        Creating_Product_For_List.ProductPrice = User.inputInt;                                    //
-                        Product_Info_That_Is_Created["Price"] = true;                                       //
+                        User.input = User.ReadLineAsDecimalRange("[cyan]  Set Price:[/]", 20);              //
+                        try
+                        {
+                            if (User.input == null)
+                            {
+                                break;
+                            }
+                            Creating_Product_For_List.ProductPrice = decimal.Parse(User.input);             //
+                            Product_Info_That_Is_Created["Price"] = true;                                   //
+                        }
+                        catch
+                        {
+                            AnsiConsole.MarkupLine("[red]  Invalid input![/]");                             //
+                            Product_Info_That_Is_Created["Price"] = false;                                  //
+                            Console.ReadKey();
+                        }
                         break;
 
+                    //Product Stock Quantity!
                     case "Product Stock Quantity":                                                          //
-                        User.ReadInputInt();                                                               //
-                        Creating_Product_For_List.ProductStockQuantity = User.inputInt;                            //
-                        Product_Info_That_Is_Created["Quantity"] = true;                                    //
+                        int.TryParse(User.ReadLineAsIntRange("[cyan]  Set Quantity:[/]", 20), out User.inputInt); //
+                        try
+                        {
+                            if (User.inputInt == null)
+                            {
+                                break;
+                            }
+                            Creating_Product_For_List.ProductStockQuantity = User.inputInt;                 //
+                            Product_Info_That_Is_Created["Quantity"] = true;                                //
+                        }
+                        catch
+                        {
+                            AnsiConsole.MarkupLine("[red]  Invalid input![/]");                             //
+                            Product_Info_That_Is_Created["Quantity"] = false;                               //
+                            Console.ReadKey();
+                        }
                         break;
 
+                    //Product Supplier Name!
                     case "Product Supplier Name":                                                           //
-                        User.ReadInput();                                                                   //
-                        Creating_Product_For_List.SupplierName = User.input;                                    //
-                        Product_Info_That_Is_Created["Company"] = true;                                     //
+                        User.input = User.ReadLineRange("[cyan]  Set Company Name:[/]", 30);                          //Read User Input!
+                        try
+                        {
+                            if (User.input == null)
+                            {
+                                break;
+                            }
+                            Creating_Product_For_List.SupplierName = User.input;                            //Set Product_Info_That_Is_Created Product Name to the same as User Input! 
+                            Product_Info_That_Is_Created["Company"] = true;                                 //Set Condition to true!
+                        }
+                        catch
+                        {
+                            AnsiConsole.MarkupLine("[red]  Invalid input![/]");                             //Write this text if input is invalid!
+                            Product_Info_That_Is_Created["Company"] = false;                                //Set Condition to false!
+                            Console.ReadKey();
+                        }
                         break;
 
+                    //Add Tag!
                     case "Add Tag":                                                                         //
-                        User.ReadInput();                                                                   //
+                        User.input = User.ReadLineRange("[cyan]  Add Tag:[/]", 30);                         //
+                        if (User.input == null)
+                        {
+                            break;
+                        }
                         Creating_Product_For_List.tagsList.Add(User.input);                                 //
                         break;
 
+                    //Remove Tag!
+                    case "Remove Tag":
+
+                        //
+                        List<string> Active_Tags = new List<string>();
+
+                        foreach (string Tag in Creating_Product_For_List.tagsList)
+                        {
+
+                            Active_Tags.Add(Tag);
+
+                        }
+
+                        // Skapar en panel som visar produkterna.
+                        var TagPanel = new Panel(string.Join("\n", Active_Tags.AsEnumerable().Reverse())).Header(" TAGS # ").Border(BoxBorder.Rounded);
+
+                        //Create and write Table Window on the right side!
+                        Console.SetCursorPosition(0, 4);
+                        AnsiConsole.Write(new Align(TagPanel, HorizontalAlignment.Right));
+                        Console.SetCursorPosition(0, 4);
+
+                        Active_Tags.Add("Back");
+
+                        Create_Product_Options = AnsiConsole
+                            .Prompt(new SelectionPrompt<string>()
+                            .AddChoices
+                            (Active_Tags));
+
+                        //
+                        switch (Create_Product_Options)
+                        {
+                            //
+                            case "Back":
+                                break;
+
+                            default:
+                                Active_Tags.Remove(Active_Tags.Last());
+                                int choice = Active_Tags.FindIndex(tag => tag == Create_Product_Options);
+                                Active_Tags.Remove(Active_Tags[choice]);
+                                Creating_Product_For_List.tagsList = Active_Tags;
+                                break;
+                        }
+
+                        break;
+
+
+                    //Confirm Product!
                     case "Confirm Product":                                                                 //
 
                         //Check if all Conditions are met!
@@ -370,10 +462,17 @@ namespace Assignment_Group_Project.Scripts.Statics
                             //
                             AnsiConsole.MarkupLine("[green]Product has now been added![/]");                //
 
-                            // Sparar all data och den nya produkten i data.json.
+                            // Save into .json!
+                            appData.Products = Products;
                             DataStorage.Save("data.json", appData);
 
-                            AddToStorageHistory(Creating_Product_For_List.ProductName, "Added");                   //
+
+                            AddToStorageHistory                                                             //
+                                (Creating_Product_For_List.ProductName,
+                                Creating_Product_For_List.ProductArticleNumber,
+                                Creating_Product_For_List.SupplierName,
+                                ProductHistory.Status.Added);
+
                             Console.ReadKey();                                                              //
                             return;
                         }
@@ -387,11 +486,20 @@ namespace Assignment_Group_Project.Scripts.Statics
                         }
                         break;
 
+                    //Cancel Product!
                     case "Cancel Product":                                                                  //
-                        AddToStorageHistory                                                                 //
-                            (Creating_Product_For_List.ProductArticleNumber.ToString(), "Canceled");
 
-                        // Sparar all data och den nya produkten i data.json.
+                        Creating_Product_For_List.ProductName = "";                                         //
+                        Creating_Product_For_List.SupplierName = "";                                        //
+
+                        AddToStorageHistory                                                                 //
+                            (Creating_Product_For_List.ProductName,
+                            Creating_Product_For_List.ProductArticleNumber,
+                            Creating_Product_For_List.SupplierName,
+                            ProductHistory.Status.Cancelled);
+
+                        // Save into .json!
+                        appData.Products = Products;
                         DataStorage.Save("data.json", appData);
 
                         AnsiConsole.MarkupLine("[yellow] Creating Product has been Canceled![/]");          //
@@ -406,55 +514,213 @@ namespace Assignment_Group_Project.Scripts.Statics
         //Test Update Product In Storage version 0.1
         public static void UpdateProductInStorage()
         {
-            Load();
+            //Load Products
+            AppData appData = DataStorage.Load<AppData>("data.json");
+            var Products = appData.Products;
 
-            AnsiConsole.MarkupLine("[blue]What Product Would You Like To Update?[/]");
+            Console.Clear();
+
+            Write.UpdateProduct();
+
+            CreateProductTabelUI();
+
+            User.cursorPosition = new Vector2(1, 3);
+
+            //
+            Console.SetCursorPosition(((int)User.cursorPosition.X), ((int)User.cursorPosition.Y + 1));
+
+            AnsiConsole.MarkupLine("[blue] What Product Would You Like To Update?[/]\n");
             List<string> choices = new List<string>();
-            choices.Add("Search: ");
-            choices = Products.FindAll(item => item != null).Select(item => item.ProductName).ToList();
-            choices.Add("Back to Storage Menu");
+            //choices.Add("Search: ");
+            foreach (var choice in Products)
+            {
+
+                choices.Add($"{choice.ProductName} - {choice.ProductArticleNumber}");
+
+            }
+
+            //choices = Products.FindAll(item => item != null).Select(item => item.Name).ToList();
+            choices.Add("Back");
 
             string UpdateOptions = AnsiConsole.Prompt(new SelectionPrompt<string>().AddChoices(choices));
 
-            if (UpdateOptions == "Back to Storage Menu")
+            if (UpdateOptions == "Back")
             {
-                StorageMenu();
+                return;
             }
             else
             {
-                Product productToUpdate = Products.Find(item => item.ProductName == UpdateOptions);
-
+                Product productToUpdate = Products.Find(item => item.ProductName == UpdateOptions)!;
                 if (productToUpdate != null)
                 {
-                    AnsiConsole.MarkupLine($"[blue]Updating Product: {productToUpdate.ProductName}[/]");
-                    Console.WriteLine("Enter new values (leave blank to keep current value):");
 
-                    Console.Write($"Product Name ({productToUpdate.ProductName}): ");
-                    User.ReadInput();
-                    productToUpdate.ProductName = User.input;
+                    void CreateTable()
+                    {
+                        //
+                        Console.Clear();
 
-                    Console.Write($"Product Price ({productToUpdate.ProductPrice}): ");
-                    User.ReadInputDecimal();
-                    productToUpdate.ProductPrice = User.inputDecimal;
+                        //
+                        Write.UpdateProduct();
 
-                    Console.Write($"Product Stock Quantity ({productToUpdate.ProductStockQuantity}): ");
-                    User.ReadInputInt();
-                    productToUpdate.ProductStockQuantity = User.inputInt;
+                        //
+                        var table = new Table();
 
-                    Console.Write($"Product Supplier Name ({productToUpdate.SupplierName}): ");
-                    User.ReadInput();
-                    productToUpdate.SupplierName = User.input;
+                        table.AddColumn("Product     ");                                                            //Product Name!
+                        table.AddColumn("Artical ");                                                                //Artical Number!
+                        //table.AddColumn("Quantity");                                                                //Stock Quantity!
+                        //table.AddColumn("Price       ");                                                            //Price Per Product!
+                        table.AddColumn("Company     ");                                                            //Company Suppliers!
 
-                    // Sparar all data och den nya produkten i data.json.
-                    DataStorage.Save("ProductList.json", Products);
+                        //
+                        table
+                            .AddRow(productToUpdate.ProductName!.ToString(),
+                            productToUpdate.ProductArticleNumber.ToString(),
+                            //productToUpdate.ProductStockQuantity.ToString(),
+                            //productToUpdate.ProductPrice.ToString(),
+                            productToUpdate.SupplierName!.ToString());
 
-                    //
-                    AnsiConsole.MarkupLine("[green]Product updated successfully![/]");
+                        //
+                        User.cursorPosition = new Vector2(Console.CursorLeft, Console.CursorTop);
+                        Console.SetCursorPosition(((int)User.cursorPosition.X), ((int)User.cursorPosition.Y));
+                        AnsiConsole.Write(new Align(table, HorizontalAlignment.Right));
+
+                    }
+
+                    bool RunUpdateProduct = true;
+                    while (RunUpdateProduct == true)
+                    {
+
+                        CreateTable();
+
+                        //
+                        Console.SetCursorPosition(((int)User.cursorPosition.X), ((int)User.cursorPosition.Y));
+
+                        string UpdateValue = AnsiConsole
+                            .Prompt(new SelectionPrompt<string>()
+                            .AddChoices("Name", "Price", "Quantity", "Tags", "Confirm", "Back To Storage Page"));
+
+                        switch (UpdateValue)
+                        {
+                            case "Name":
+                                User.input = productToUpdate.ProductName;
+                                try
+                                {
+                                    //
+                                    CreateTable();
+                                    Console.SetCursorPosition(((int)User.cursorPosition.X), ((int)User.cursorPosition.Y));
+                                    User.input = User.ReadLineRange("[cyan]  Name: [/]", 60);
+                                    if (User.input == null)
+                                    {
+                                        User.input = productToUpdate.ProductName;
+                                    }
+                                    else
+                                    {
+                                        productToUpdate.ProductName = User.input;
+                                    }
+
+                                }
+                                catch
+                                {
+
+                                }
+                                break;
+
+                            case "Artical Number":
+                                User.inputInt = productToUpdate.ProductArticleNumber;
+                                try
+                                {
+                                    //
+                                    CreateTable();
+                                    Console.SetCursorPosition(((int)User.cursorPosition.X), ((int)User.cursorPosition.Y));
+                                    User.inputInt = int.Parse(User.ReadLineAsIntRange("[cyan]  Artical number: [/]", 7)!);
+                                    productToUpdate.ProductArticleNumber = User.inputInt;
+                                }
+                                catch
+                                {
+
+                                }
+                                break;
+
+                            case "Price":
+                                User.inputDecimal = productToUpdate.ProductPrice;
+                                try
+                                {
+                                    //
+                                    CreateTable();
+                                    Console.SetCursorPosition(
+                                        ((int)User.cursorPosition.X), ((int)User.cursorPosition.Y));
+                                    User.inputDecimal = decimal.Parse(User.ReadLineAsDecimalRange("[cyan]  Quantity: [/]", 9)!);
+                                    productToUpdate.ProductPrice = User.inputDecimal;
+                                }
+                                catch
+                                {
+
+                                }
+                                break;
+
+                            case "Quantity":
+                                User.inputInt = productToUpdate.ProductStockQuantity;
+                                try
+                                {
+                                    //
+                                    CreateTable();
+                                    Console.SetCursorPosition(
+                                        ((int)User.cursorPosition.X), ((int)User.cursorPosition.Y));
+                                    User.inputInt = int.Parse(User.ReadLineAsIntRange("[cyan]  Quantity: [/]", 9)!);
+                                    productToUpdate.ProductStockQuantity = User.inputInt;
+                                }
+                                catch
+                                {
+
+                                }
+                                break;
+
+                            //Not yet in use!
+                            case "Size":
+
+
+                                break;
+
+                            case "Add Tags":
+                                AnsiConsole.MarkupLine("Work In Progress");
+                                break;
+
+                            case "Remove Tags":
+
+                                break;
+
+                            case "Confirm":
+
+                                int Item = Products                                                             //
+                                    .FindIndex(product => product.ProductArticleNumber == productToUpdate.ProductArticleNumber);
+                                Products[Item] = productToUpdate;                                               //
+
+                                // Save into .json!
+                                appData.Products = Products;                                                    //
+                                DataStorage.Save("data.json", appData);                                         //
+
+                                AddToStorageHistory(                                                            //
+                                    Products[Item].ProductName!,
+                                    Products[Item].ProductArticleNumber,
+                                    Products[Item].SupplierName!,
+                                    ProductHistory.Status.Updated);
+
+                                return;
+
+                            case "Back To Storage Page":
+                                RunUpdateProduct = false;
+                                break;
+
+                        }
+                    }
                 }
                 else
                 {
                     AnsiConsole.MarkupLine("[red]Product not found![/]");
+                    Console.ReadKey();
                 }
+
+                return;
             }
 
 
@@ -465,18 +731,27 @@ namespace Assignment_Group_Project.Scripts.Statics
         public static void RemoveProductFromStorage()
         {
 
+            //Load Products
+            AppData appData = DataStorage.Load<AppData>("data.json");                                           //
+            var Products = appData.Products;                                                                    //
+
+            //Creating Menu!
+            Console.Clear();                                                                                    //Clear Console Window!
+
+            Write.RemoveProduct();                                                                              //Create RemoveProduct ASCII Text!
+
             AnsiConsole.MarkupLine                                                                              //Display a message to the user asking which product they would like to remove!
                 ("[blue]What Product Would You Like To Remove?[/]");
 
             // Create a list of product names for the selection prompt!
-            List<string> choices = new List<string>();
+            List<string> choices = new List<string>();                                                          //Create a List<string> to create a list of "choices"!
 
             choices.Add("Search:");                                                                             //Add "Search" as the first option to the list of choices!
             foreach (var product in Products)                                                                   //Loop through each product in the Products list and add its name to the choices list!
             {
                 if (product != null)                                                                            //Check if the product is not null before adding its name to the choices list!
                 {
-                    choices.Add(product.ProductName);                                                           //Add the product name to the choices list!
+                    choices.Add(product.ProductName!);                                                           //Add the product name to the choices list!
                 }
             }
             choices.Add("Back To Main Menu");                                                                   //Add "Back To Main Menu" as the last option to the list of choices!
@@ -494,7 +769,7 @@ namespace Assignment_Group_Project.Scripts.Statics
             }
             else
             {
-                Product productToRemove = Products.Find(item => item.ProductName == ChoosenProduct);            //Find the product in the Products list that matches the chosen product name!
+                Product productToRemove = Products.Find(item => item.ProductName == ChoosenProduct)!;            //Find the product in the Products list that matches the chosen product name!
                 if (productToRemove != null)                                                                    //Check if the product to remove is not null!
                 {
                     AnsiConsole.MarkupLine                                                                      //Ask the user for confirmation before removing the product!
@@ -507,7 +782,20 @@ namespace Assignment_Group_Project.Scripts.Statics
                         //If the user confirms the removal, remove the product from the Products list and display a success message!
                         case "Yes":
 
+                            //Remove Item!
                             Products.Remove(productToRemove);                                                   //Remove the product from the Products list!
+                            appData.Products = Products;                                                        //Set appData's Products List Value as methods Products value!
+
+                            //Save Changes!
+                            DataStorage.Save("data.json", appData);                                             //
+
+                            AddToStorageHistory(                                                                //
+                                productToRemove.ProductName!,
+                                productToRemove.ProductArticleNumber,
+                                productToRemove.SupplierName!,
+                                ProductHistory.Status.Removed);
+
+                            //Finale line bofore finishing method!
                             AnsiConsole.MarkupLine                                                              //Display a success message to the user!
                                 ($"[green]Product '{productToRemove.ProductName}' removed successfully![/]");
                             Console.ReadKey();                                                                  //Wait for the user to press a key before continuing!
@@ -539,50 +827,76 @@ namespace Assignment_Group_Project.Scripts.Statics
         {
 
             //Load Products
-            Load();
+            AppData appData = DataStorage.Load<AppData>("data.json");
+            var Products = appData.Products;
 
             //
-            AnsiConsole.MarkupLine("[blue]Test Storage[/]");
+            Write.StorageMenu();
 
-            User.inputChoice = AnsiConsole.Prompt(new SelectionPrompt<string>()
-                .AddChoices("Search For Item", "Exit Program"));
+            var table = new Table();
+
+            table.AddColumn("Product Name");
+            table.AddColumn("Article Number");
+            //table.AddColumn("Stock Quantity");
+            //table.AddColumn("Price Per Product");
+            table.AddColumn("Suppliers");
+
+            foreach (var item in Products)
+            {
+
+                table.AddRow(item.ProductName!.ToString(), item.ProductArticleNumber.ToString(), /*item.ProductStockQuantity.ToString(),*//* item.ProductPrice.ToString(),*/ item.SupplierName!.ToString());
+
+            }
+            Console.SetCursorPosition(0, 4);
+            AnsiConsole.Write(new Align(table, HorizontalAlignment.Right));
+            Console.SetCursorPosition(0, 4);
+
+
+            List<string> choices = new List<string>();
+            choices.Add("Search:");
+            foreach (var choice in Products)
+            {
+
+                choices.Add($"{choice.ProductName} - {choice.ProductArticleNumber}");
+
+            }
+
+            //choices = Products.FindAll(item => item != null).Select(item => item.Name).ToList();
+            choices.Add("Back To Storage");
+
+            User.inputChoice = AnsiConsole.Prompt(new SelectionPrompt<string>().AddChoices(choices));
+
+            //
+            //User.inputChoice = AnsiConsole.Prompt(new SelectionPrompt<string>()
+            //    .AddChoices("Search:", "Back To Storage"));
 
             switch (User.inputChoice)
             {
-                case "Search For Item":
-
-                    // Implementation for searching for an item
+                case "Search:":
 
                     //
-                    var table = new Table();
+                    Console.Clear();
 
-                    table.AddColumn("Product Name");
-                    table.AddColumn("Article Number");
-                    table.AddColumn("Stock Quantity");
-                    table.AddColumn("Price Per Product");
-                    table.AddColumn("Suppliers");
+                    Write.StorageMenu();
 
-                    foreach (var item in Products)
-                    {
-
-                        table.AddRow(item.ProductName.ToString(), item.ProductArticleNumber.ToString(), item.ProductStockQuantity.ToString(), item.ProductPrice.ToString(), item.SupplierName.ToString());
-
-                    }
-                    AnsiConsole.Write(table);
+                    Console.SetCursorPosition(0, 4);
+                    AnsiConsole.Write(new Align(table, HorizontalAlignment.Right));
+                    Console.SetCursorPosition(0, 4);
 
                     //Create search text and read input from user!
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    Console.Write("Search: ");
-                    Console.ResetColor();
-                    User.ReadInput();
+                    User.input = User.ReadLineRange("[cyan]  Search: [/]", 40);
+                    if (User.input == null)
+                    {
+                        break;
+                    }
 
                     table = new Table();
 
-                    table.AddColumn("Product Name");
-                    table.AddColumn("Article Number");
-                    table.AddColumn("Stock Quantity");
-                    table.AddColumn("Price Per Product");
-                    table.AddColumn("Suppliers");
+                    table.AddColumn("Article ");
+                    table.AddColumn("Name                ");
+                    table.AddColumn("Quantity");
+                    table.AddColumn("Price     ");
+                    table.AddColumn("Suppliers           ");
 
                     //Check 1: Search if Input matches ArticleNumber exactly!
                     List<Product> Find_Item_With_The_Exact_Atrical_Number_As_User_Input = Products.FindAll(product => product.ProductArticleNumber.ToString() == User.input);
@@ -592,57 +906,91 @@ namespace Assignment_Group_Project.Scripts.Statics
                         Console.WriteLine("Found product by exact match with Article Number!");
                         foreach (var product in Find_Item_With_The_Exact_Atrical_Number_As_User_Input)
                         {
-                            table.AddRow(product.ProductName.ToString(), product.ProductArticleNumber.ToString(), product.ProductStockQuantity.ToString(), product.ProductPrice.ToString(), product.SupplierName.ToString());
+                            table.AddRow(product.ProductArticleNumber.ToString(), product.ProductName!.ToString(), product.ProductStockQuantity.ToString(), product.ProductPrice.ToString(), product.SupplierName!.ToString());
                         }
-                        AnsiConsole.Write(table);
+
+                        ClearRightSideOfWindow();
+
+                        Console.SetCursorPosition(0, 4);
+                        AnsiConsole.Write(new Align(table, HorizontalAlignment.Right));
+                        Console.SetCursorPosition(0, 4);
                     }
                     else
                     {
                         //Check 2: Search if Input matches ProductName exactly!
-                        List<Product> Find_Items_With_The_Exact_Name_As_User_Inpus = Products.FindAll(product => product.ProductName.ToLower().Contains(User.input.ToLower())).ToList();
+                        List<Product> Find_Items_With_The_Exact_Name_As_User_Inpus = Products.FindAll(product => product.ProductName!.ToLower().Contains(User.input.ToLower())).ToList();
 
-                        if (Products.Exists(item => item.ProductName.ToLower() == User.input.ToLower()))
+                        if (Products.Exists(item => item.ProductName!.ToLower() == User.input.ToLower()))
                         {
-                            Console.WriteLine("Found product by exact match with Product Name!");
+                            //Console.WriteLine("Found product by exact match with Product Name!");
 
                             foreach (var product in Find_Items_With_The_Exact_Name_As_User_Inpus)
                             {
-                                table.AddRow(product.ProductName.ToString(), product.ProductArticleNumber.ToString(), product.ProductStockQuantity.ToString(), product.ProductPrice.ToString(), product.SupplierName.ToString());
+                                table.AddRow(
+                                    product.ProductName!.ToString(),
+                                    product.ProductArticleNumber.ToString(),
+                                    product.ProductStockQuantity.ToString(),
+                                    product.ProductPrice.ToString(),
+                                    product.SupplierName!.ToString());
                             }
-                            AnsiConsole.Write(table);
+
+                            ClearRightSideOfWindow();
+
+                            Console.SetCursorPosition(0, 4);
+                            AnsiConsole.Write(new Align(table, HorizontalAlignment.Right));
+                            Console.SetCursorPosition(0, 4);
                         }
 
                         else
                         {
 
                             //Check 3: Search if Input matches name of Product partially!
-                            List<Product> Find_Items_That_Contains_Input = Products.FindAll(item => item.ProductName.ToLower().Contains(User.input.ToLower())).ToList();
+                            List<Product> Find_Items_That_Contains_Input = Products.FindAll(item => item.ProductName!.ToLower().Contains(User.input.ToLower())).ToList();
 
                             if (Find_Items_That_Contains_Input.Count > 0)
                             {
-                                Console.WriteLine("Found product by partial match!");
+                                //Console.WriteLine("Found product by partial match!");
 
                                 foreach (var product in Find_Items_That_Contains_Input)
                                 {
-                                    table.AddRow(product.ProductName.ToString(), product.ProductArticleNumber.ToString(), product.ProductStockQuantity.ToString(), product.ProductPrice.ToString(), product.SupplierName.ToString());
+                                    table.AddRow(product.ProductName!.ToString(),
+                                        product.ProductArticleNumber.ToString(),
+                                        product.ProductStockQuantity.ToString(),
+                                        product.ProductPrice.ToString(),
+                                        product.SupplierName!.ToString());
                                 }
-                                AnsiConsole.Write(table);
+
+                                ClearRightSideOfWindow();
+
+                                Console.SetCursorPosition(0, 4);
+                                AnsiConsole.Write(new Align(table, HorizontalAlignment.Right));
+                                Console.SetCursorPosition(0, 4);
                             }
 
                             else
                             {
 
                                 //Check 4: Search if Input matches any of the Product Tags!
-                                List<Product> Find_Items_That_Contains_Input_In_Tags = Products.FindAll(item => item.tagsList.Exists(tag => tag.ToLower().Contains(User.input.ToLower()))).ToList();
+                                List<Product> Find_Items_That_Contains_Input_In_Tags = Products
+                                    .FindAll(item => item.tagsList.Exists(tag => tag.ToLower().Contains(User.input.ToLower()))).ToList();
 
                                 if (Find_Items_That_Contains_Input_In_Tags.Count > 0)
                                 {
-                                    Console.WriteLine("Found product by tag match!");
+                                    //Console.WriteLine("Found product by tag match!");
                                     foreach (var product in Find_Items_That_Contains_Input_In_Tags)
                                     {
-                                        table.AddRow(product.ProductName.ToString(), product.ProductArticleNumber.ToString(), product.ProductStockQuantity.ToString(), product.ProductPrice.ToString(), product.SupplierName.ToString());
+                                        table.AddRow(product.ProductName!.ToString(),
+                                            product.ProductArticleNumber.ToString(),
+                                            product.ProductStockQuantity.ToString(),
+                                            product.ProductPrice.ToString(),
+                                            product.SupplierName!.ToString());
                                     }
-                                    AnsiConsole.Write(table);
+
+                                    ClearRightSideOfWindow();
+
+                                    Console.SetCursorPosition(0, 4);
+                                    AnsiConsole.Write(new Align(table, HorizontalAlignment.Right));
+                                    Console.SetCursorPosition(0, 4);
 
                                 }
                                 // If no products were found!
@@ -659,29 +1007,35 @@ namespace Assignment_Group_Project.Scripts.Statics
                     Console.ReadKey();
                     break;
 
-                case "Exit Program":
+                case "Back To Storage":
                     return;
             }
         }//Finished Running Task!
 
 
         //
-        public static void AddToStorageHistory(string What_Product_Is_It, string What_Condition_It_Was_Added)
+        public static void AddToStorageHistory(string What_Product_Is_It, int What_Artical_Number, string What_Company, ProductHistory.Status What_Condition_It_Is_In)
         {
 
             //Load Products
-            Load();
+            AppData appData = DataStorage.Load<AppData>("data.json");
+            ProductHistoryRef = appData.ProductHistory;
+            ProductHistory NewHistory = new ProductHistory();
 
-            DateTime When_This_Got_Added_To_History = DateTime.Now;
+            NewHistory.Year = DateTime.Now.Year;
+            NewHistory.Month = DateTime.Now.Month;
+            NewHistory.Day = DateTime.Now.Day;
+            NewHistory.Name = What_Product_Is_It;
+            NewHistory.ArticalNumber = What_Artical_Number;
+            NewHistory.Company = What_Company;
+            NewHistory.Time = new ProductHistory.Vector3C(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+            NewHistory.status = What_Condition_It_Is_In;
 
+            ProductHistoryRef.Add(NewHistory);
 
+            appData.ProductHistory = ProductHistoryRef;
 
-            string PushText = ($"{When_This_Got_Added_To_History} | {What_Product_Is_It} | {What_Condition_It_Was_Added}");
-
-            ProductHistory.Add(PushText);
-            DataStorage.Save("ProductHistory.json", Products);
-
-
+            DataStorage.Save("data.json", appData);
 
         }
 
@@ -693,52 +1047,314 @@ namespace Assignment_Group_Project.Scripts.Statics
             {
 
                 //Load Products
-                Load();
+                AppData appData = DataStorage.Load<AppData>("data.json");
+                ProductHistoryRef = appData.ProductHistory;
 
                 Console.Clear();
 
+
+
                 //Write.ProductHistory();
 
-                List<string> History = ProductHistory.AsEnumerable().Reverse().ToList();                               //
+                //List<ProductHistory> History = ProductHistoryRef.AsEnumerable().Reverse().ToList();                               //
 
-                var table = new Table();
+                List<string> HistoryList = new List<string>();
 
-                table.AddColumn("Storage History!");
+                //
+                int maxValue = 0;
+                int minValue = 0;
 
-                int foreachTime = 0;
-                foreach (string History_Action in History)
+                try
                 {
-                    if (foreachTime <= 10)
+
+                    //
+                    maxValue = ProductHistoryRef.Count;
+
+                    for (int i = minValue; i < maxValue; i++)
                     {
-                        table.AddRow(History_Action);
-                    }
-                    else
-                    {
-                        break;
+                        if (ProductHistoryRef[i].Name == null)
+                        {
+                            break;
+                        }
+
+                        try
+                        {
+                            HistoryList.Add
+                            ($"{ProductHistoryRef[i].ArticalNumber.ToString("D7")} | " +
+                             $"{ProductHistoryRef[i].Year.ToString()}/" +
+                             $"{ProductHistoryRef[i].Month.ToString()}/" +
+                             $"{ProductHistoryRef[i].Day.ToString()}   | " +
+                             $"{ProductHistoryRef[i].Time.X.ToString("D2")}:" +
+                             $"{ProductHistoryRef[i].Time.Y.ToString("D2")}:" +
+                             $"{ProductHistoryRef[i].Time.Z.ToString("D2")} | " +
+                             $"{ProductHistoryRef[i].Name!.ToString()} | " +
+                             $"{ProductHistoryRef[i].Company!.ToString()} | " +
+                             $"{ProductHistoryRef[i].status.ToString()}");
+                        }
+                        catch
+                        {
+                            break;
+                        }
+
                     }
 
                 }
+                catch
+                {
+                    HistoryList = new List<string>() { "History is Empty!" };
+                }
+
+
+
+                // Skapar en panel som visar produkterna.
+                var HistoryPanel = new Panel(string.Join("\n", HistoryList.AsEnumerable().Reverse())).Header("HISTORY").Border(BoxBorder.Rounded);
+
+                //Create Title Text!
+                Write.ProductHistory();
 
                 //Create and write Table Window on the right side!
-                AnsiConsole.Write(new Align(table, HorizontalAlignment.Right));
+                Console.SetCursorPosition(0, 4);
+                AnsiConsole.Write(new Align(HistoryPanel, HorizontalAlignment.Right));
 
                 Console.SetCursorPosition(0, 4);
 
-                var Option = AnsiConsole
-                    .Prompt(new SelectionPrompt<string>().AddChoices("Search: ", "Back To Storage Menu"));
+                string Option = AnsiConsole.Prompt(new SelectionPrompt<string>().AddChoices( "Back To Storage"));
 
                 switch (Option)
                 {
-                    case "Search: ":
+                    case "Search:":
 
+                        AnsiConsole.Markup("[cyan]  Search: [/]");
+                        User.input = User.ReadLine();
+                        try
+                        {
+                            //
+                            List<ProductHistory> Find_All_In_Year = new List<ProductHistory>();
+                            try
+                            {
+                                Find_All_In_Year = ProductHistoryRef.FindAll(item => item.Year == int.Parse(User.input!));
+                            }
+                            catch
+                            { }
+                            if (Find_All_In_Year.Count == 0)
+                            {
+                                Find_All_In_Year = ProductHistoryRef;
+                            }
+
+                            //
+                            List<ProductHistory> Find_All_In_Month = new List<ProductHistory>();
+                            try
+                            {
+                                Find_All_In_Month = Find_All_In_Year.FindAll(item => item.Month == int.Parse(User.input!));
+                            }
+                            catch
+                            { }
+                            if (Find_All_In_Month.Count == 0)
+                            {
+                                Find_All_In_Month = Find_All_In_Year;
+                            }
+
+                            //
+                            List<ProductHistory> Find_All_In_Day = new List<ProductHistory>();
+                            try
+                            {
+                                Find_All_In_Day = Find_All_In_Month.FindAll(item => item.Day == int.Parse(User.input!));
+                            }
+                            catch
+                            { }
+                            if (Find_All_In_Day.Count == 0)
+                            {
+                                Find_All_In_Day = Find_All_In_Month;
+                            }
+
+                            //
+                            List<ProductHistory> Find_All_In_Time = Find_All_In_Day.FindAll(item => item.Time.ToString() == User.input);
+                            if (Find_All_In_Time.Count == 0)
+                            {
+                                Find_All_In_Time = Find_All_In_Day;
+                            }
+
+                            //
+                            List<ProductHistory> Find_All_In_Name = Find_All_In_Time.FindAll(item => item.Name!.ToString() == User.input);
+                            if (Find_All_In_Name.Count == 0)
+                            {
+                                Find_All_In_Name = Find_All_In_Time;
+                            }
+
+                            //
+                            List<ProductHistory> Find_All_In_Company = Find_All_In_Name.FindAll(item => item.Company!.ToString() == User.input);
+                            if (Find_All_In_Company.Count == 0)
+                            {
+                                Find_All_In_Company = Find_All_In_Name;
+                            }
+
+                            //
+                            List<ProductHistory> Find_All_In_Status = Find_All_In_Company.FindAll(item => item.status.ToString() == User.input);
+                            if (Find_All_In_Status.Count == 0)
+                            {
+                                Find_All_In_Status = Find_All_In_Company;
+                            }
+
+                            //
+                            List<ProductHistory> Find_All_In_Artical_Number = Find_All_In_Company.FindAll(item => item.status.ToString() == User.input);
+                            try
+                            {
+                                Find_All_In_Artical_Number = Find_All_In_Status.FindAll(item => item.status.ToString() == User.input);
+                            }
+                            catch
+                            { }
+                            if (Find_All_In_Artical_Number.Count == 0)
+                            {
+                                Find_All_In_Artical_Number = Find_All_In_Status;
+                            }
+
+
+                            var All_Found_Items = Find_All_In_Artical_Number;
+
+                            ClearRightSideOfWindow();
+
+                            HistoryList.Clear();
+
+                            maxValue = All_Found_Items.Count();
+
+                            try
+                            {
+
+                                for (int i = minValue; i < maxValue; i++)
+                                {
+                                    if (All_Found_Items[i].Name == null)
+                                    {
+
+                                    }
+
+                                    try
+                                    {
+                                        HistoryList.Add
+                                        ($"{ProductHistoryRef[i].ArticalNumber.ToString("D7")} | " +
+                                         $"{ProductHistoryRef[i].Year.ToString()}/" +
+                                         $"{ProductHistoryRef[i].Month.ToString()}/" +
+                                         $"{ProductHistoryRef[i].Day.ToString()}   | " +
+                                         $"{ProductHistoryRef[i].Time.X.ToString("D2")}:" +
+                                         $"{ProductHistoryRef[i].Time.Y.ToString("D2")}:" +
+                                         $"{ProductHistoryRef[i].Time.Z.ToString("D2")} | " +
+                                         $"{ProductHistoryRef[i].Name!.ToString()} | " +
+                                         $"{ProductHistoryRef[i].Company!.ToString()} | " +
+                                         $"{ProductHistoryRef[i].status.ToString()}");
+                                    }
+                                    catch
+                                    {
+                                        break;
+                                    }
+
+                                }
+
+                            }
+                            catch
+                            {
+                                HistoryList = new List<string>() { "History is Empty!" };
+                            }
+
+
+
+                            // Skapar en panel som visar produkterna.
+                            HistoryPanel = new Panel(string.Join("\n", HistoryList.AsEnumerable().Reverse())).Header("HISTORY").Border(BoxBorder.Rounded);
+
+
+                            //Create and write Table Window on the right side!
+                            Console.SetCursorPosition(0, 4);
+                            AnsiConsole.Write(new Align(HistoryPanel, HorizontalAlignment.Right));
+                            Console.SetCursorPosition(0, 4);
+
+
+
+                        }
+                        catch
+                        {
+                            AnsiConsole.MarkupLine("Could not run Search Method!");
+                        }
+                        Console.ReadKey();
 
                         break;
 
-                    case "Back To Storage Menu":
+                    case "Back To Storage":
                         return;
 
                 }
             }
+        }
+
+        //
+        private static void MakeProductOptionsSelectionPrompt()
+        {
+
+            //Create StorageHistory Options!
+            List<string> choices = new List<string>();                                                  //Create a List of strings!
+            choices.Add("Search: ");                                                                    //Add a string into the 'choices' List!
+            choices = Products.FindAll(item => item != null).Select(item => item.ProductName).ToList()!; //Add all Products 
+            choices.Add("Back to Storage Menu");
+
+            string Option = AnsiConsole.Prompt(new SelectionPrompt<string>().AddChoices(choices));
+
+        }
+
+        //
+        private static void ClearRightSideOfWindow()
+        {
+
+            Console.SetCursorPosition(((int)Console.WindowWidth - 70), 4);
+
+            //
+            for (int i = 0; i < 30; i++)
+            {
+                try
+                {
+                    for (int s = 0; s < 70; s++)
+                    {
+                        AnsiConsole.Markup(" ");
+                    }
+                    Console.SetCursorPosition(((int)Console.WindowWidth - 70), Console.CursorTop + 1);
+                }
+                catch
+                {
+                    break;
+                }
+            }
+
+        }
+
+        //
+        private static void CreateProductTabelUI()
+        {
+
+            //Load Products
+            AppData appData = DataStorage.Load<AppData>("data.json");
+            var Products = appData.Products;
+
+            //
+            var table = new Table();
+
+            table.AddColumn("Product     ");                                                            //Product Name!
+            table.AddColumn("Artical ");                                                                //Artical Number!
+            //table.AddColumn("Quantity");                                                                //Stock Quantity!
+            //table.AddColumn("Price       ");                                                            //Price Per Product!
+            table.AddColumn("Company     ");                                                            //Company Suppliers!
+
+            //For index 0 to 9 in Products, add to table row!
+            for (int i = 0; i < Math.Min(Products.Count, 10); i++)
+            {
+                table.AddRow(
+                    Products[i].ProductName!.ToString(),
+                    Products[i].ProductArticleNumber.ToString(),
+                    //Products[i].ProductStockQuantity.ToString(),
+                    //Products[i].ProductPrice.ToString(), 
+                    Products[i].SupplierName!.ToString());
+            }
+
+            //
+            User.cursorPosition = new Vector2(Console.CursorLeft, Console.CursorTop);
+            Console.SetCursorPosition(((int)User.cursorPosition.X), ((int)User.cursorPosition.Y));
+            AnsiConsole.Write(new Align(table, HorizontalAlignment.Right));
+
         }
 
     }

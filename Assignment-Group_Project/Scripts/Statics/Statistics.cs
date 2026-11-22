@@ -4,6 +4,7 @@ using System.Text;
 using System.Linq;
 using Spectre.Console;
 using Assignment_Group_Project.Scripts.Objects;
+using Assignment_Group_Project.Scripts.Utilities;
 
 namespace Assignment_Group_Project.Scripts.Statics
 {
@@ -11,9 +12,13 @@ namespace Assignment_Group_Project.Scripts.Statics
     {
         public static void ShowOrderStatistics()
         {
+            Console.Clear();
+
             AppData appData = DataStorage.Load<AppData>("data.json");
             
             var orders = appData.OrderHistory.Concat(appData.Orders).ToList();
+
+            Write.Statistics();
 
             string selectedOrderType = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()

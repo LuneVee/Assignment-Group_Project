@@ -1,4 +1,5 @@
 using Assignment_Group_Project.Scripts.Objects;
+using Assignment_Group_Project.Scripts.Utilities;
 using Spectre.Console;
 
 namespace Assignment_Group_Project.Scripts.Statics
@@ -24,8 +25,8 @@ namespace Assignment_Group_Project.Scripts.Statics
             {
                 Console.WriteLine(supplier.GetSummarySupplier());
             }
-        }      
-        
+        }
+
         // Sök på företagetsnamn 
         public static void Search()
         {
@@ -35,8 +36,8 @@ namespace Assignment_Group_Project.Scripts.Statics
 
             Console.WriteLine("Search for a Supplier by name:");
 
-             // ReadLine kan ge null om inget kan läsas, så ?? "" gör att vi
-             // får en tom text i stället för null.
+            // ReadLine kan ge null om inget kan läsas, så ?? "" gör att vi
+            // får en tom text i stället för null.
             string searchName = Console.ReadLine() ?? "";
 
 
@@ -51,7 +52,7 @@ namespace Assignment_Group_Project.Scripts.Statics
             // Where plockar ut de leverantörer där villkoret stämmer.
             // s är en leverantör i listan, och villkoret kollas för varje s.
             List<Supplier> matches = appdata.Suppliers
-                .Where(s => s.SupplierCompanyName != null && 
+                .Where(s => s.SupplierCompanyName != null &&
                  s.SupplierCompanyName.Contains(searchName, StringComparison.OrdinalIgnoreCase))
                 .ToList();
 
@@ -67,105 +68,110 @@ namespace Assignment_Group_Project.Scripts.Statics
             }
         }
 
-            // Frågar tills användaren skrivit något. Används för alla tre fälten
-            // så att samma loop inte behöver skrivas tre gånger.
-                    private static string AskNotEmpty(string question)
-                    {
-                        while (true)
-                        {
-                            Console.Write(question);
-                            string answer = Console.ReadLine() ?? "";
+        // Frågar tills användaren skrivit något. Används för alla tre fälten
+        // så att samma loop inte behöver skrivas tre gånger.
+        private static string AskNotEmpty(string question)
+        {
+            while (true)
+            {
+                Console.Write(question);
+                string answer = Console.ReadLine() ?? "";
 
-                            if (!string.IsNullOrWhiteSpace(answer))
-                            {
-                                return answer.Trim();
-                            }
-
-                            Console.WriteLine("This field cannot be empty. Try again.");
-                        }
-                    }
-
-                // Lägger till en ny leverantör.
-                public static void AddSupplier()
+                if (!string.IsNullOrWhiteSpace(answer))
                 {
-
-                    // Hämtar all sparad data från data.json.
-                    AppData appData = DataStorage.Load<AppData>("data.json");
-
-                    string companyName = AskNotEmpty("Company name: ");
-
-                    // Nekar om namnet redan finns
-                    bool alreadyExists = appData.Suppliers.Any(s =>
-                        s.SupplierCompanyName != null &&
-                        s.SupplierCompanyName.Equals(companyName, StringComparison.OrdinalIgnoreCase));
-
-                    if (alreadyExists)
-                    {
-                        Console.WriteLine("A supplier with that name already exists.");
-                        return;
-                    }
-
-                    string email = AskNotEmpty("Email: ");
-                    string phoneNumber = AskNotEmpty("Phone number: ");
-
-                    Supplier newSupplier = new Supplier
-                    {
-                        SupplierCompanyName = companyName,
-                        Email = email,
-                        PhoneNumber = phoneNumber
-                    };
-
-                    // Lägger leverantören i listan och sparar direkt i data.json.
-                    appData.Suppliers.Add(newSupplier);
-                    DataStorage.Save("data.json", appData);
-
-                    Console.WriteLine("Supplier added!");
+                    return answer.Trim();
                 }
 
-                // Menyn för leverantörer. Körs tills användaren väljer att gå tillbaka.
-                   public static void CompanyMenu()
-                    {
-                    bool running = true;
+                Console.WriteLine("This field cannot be empty. Try again.");
+            }
+        }
 
-                     while (running)
-                {
-                    string choice = AnsiConsole.Prompt(
-                     new SelectionPrompt<string>()
-                    .Title("Supplier Menu")
-                    .AddChoices(
-                    "Show All Suppliers",
-                    "Search Supplier",
-                    "Add Supplier",
-                    "Back to Main Menu"
-                ));
+        // Lägger till en ny leverantör.
+        public static void AddSupplier()
+        {
 
-                 switch (choice)
+            // Hämtar all sparad data från data.json.
+            AppData appData = DataStorage.Load<AppData>("data.json");
+
+            string companyName = AskNotEmpty("Company name: ");
+
+            // Nekar om namnet redan finns
+            bool alreadyExists = appData.Suppliers.Any(s =>
+                s.SupplierCompanyName != null &&
+                s.SupplierCompanyName.Equals(companyName, StringComparison.OrdinalIgnoreCase));
+
+            if (alreadyExists)
+            {
+                Console.WriteLine("A supplier with that name already exists.");
+                return;
+            }
+
+            string email = AskNotEmpty("Email: ");
+            string phoneNumber = AskNotEmpty("Phone number: ");
+
+            Supplier newSupplier = new Supplier
+            {
+                SupplierCompanyName = companyName,
+                Email = email,
+                PhoneNumber = phoneNumber
+            };
+
+            // Lägger leverantören i listan och sparar direkt i data.json.
+            appData.Suppliers.Add(newSupplier);
+            DataStorage.Save("data.json", appData);
+
+            Console.WriteLine("Supplier added!");
+        }
+
+        // Menyn för leverantörer. Körs tills användaren väljer att gå tillbaka.
+        public static void CompanyMenu()
+        {
+
+            bool running = true;
+
+            while (running)
+            {
+                Console.Clear();
+
+                Write.Suppliers();
+
+                string choice = AnsiConsole.Prompt(
+                 new SelectionPrompt<string>()
+                .Title("Supplier Menu")
+                .AddChoices(
+                "Show All Suppliers",
+                "Search Supplier",
+                "Add Supplier",
+                "Back to Main Menu"
+            ));
+
+                switch (choice)
                 {
-                     case "Show All Suppliers":
+                    case "Show All Suppliers":
                         Company.AllSuppliers();
-                         break;
+                        break;
 
                     case "Search Supplier":
                         Company.Search();
                         break;
-                    
+
                     case "Add Supplier":
                         Company.AddSupplier();
                         break;
-                   
+
                     case "Back to Main Menu":
-                    running = false;
-                    break;
+                        running = false;
+                        break;
                 }
 
-                 if (running)
+                if (running)
                 {
                     Console.WriteLine("\nPress any key to continue...");
                     Console.ReadKey();
                     AnsiConsole.Clear();
-                    
+
+                }
+            }
         }
-    }
-}
     }
 }

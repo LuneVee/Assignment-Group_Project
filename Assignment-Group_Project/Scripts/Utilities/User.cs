@@ -345,6 +345,76 @@ namespace Assignment_Group_Project.Scripts.Utilities
 
 
 
+        //Read User Digit as Decimal Input with a max char amount!
+        public static string? ReadLineAsDecimalRange(string Text_At_The_Start_Of_The_Line, int Max_Char_For_Line)
+        {
+
+            string inputLine = "";
+            decimal inputAsdeci;
+
+            AnsiConsole.Markup($"{Text_At_The_Start_Of_The_Line} ");
+
+            while (true)
+            {
+
+                ConsoleKeyInfo key = Console.ReadKey(true);
+                Vector2 CursorPosition = new Vector2(Console.CursorLeft, Console.CursorTop);
+
+                // ESC
+                if (key.Key == ConsoleKey.Escape)                                                   //If User press the ESC key!
+                {
+                    int CharAmount = Text_At_The_Start_Of_The_Line.Length + inputLine.Length;       //
+
+                    //
+                    while (CharAmount >= 0)                                                         //
+                    {
+                        Console.Write("\b" + " " + "\b");                                           //Move back 1 char and write over it, then move back 1 char again!  \b == move back 1 char on current console line. " " == write " " as next char on console line!
+                        CharAmount -= 1;                                                            //
+                    }
+                    return null;
+                }
+
+                // ENTER
+                if (key.Key == ConsoleKey.Enter)                                                    //
+                {
+                    try
+                    {
+                        AnsiConsole.WriteLine();
+                        inputAsdeci = decimal.Parse(inputLine);
+                        return inputLine;
+                    }
+                    catch
+                    {
+                        Console.SetCursorPosition(((int)CursorPosition.X), ((int)CursorPosition.Y));
+                    }
+
+                }
+
+                // BACKSPACE = Delete character
+                if (key.Key == ConsoleKey.Backspace)
+                {
+                    if (inputLine.Length > 0)                                                       //Check how many char inputLine have!
+                    {
+                        inputLine = inputLine[..^1];                                                //inputLine = itself - last char that it have! So it just remove it last char.
+                        AnsiConsole.Markup("\b" + " " + "\b");                                      //Move back 1 char and write over it, then move back 1 char again!  \b == move back 1 char on current console line. " " == write " " as next char on console line!
+                    }
+                }
+
+                // If User typ on the keyboard!
+                else if (char.IsDigit(key.KeyChar) ||
+                         ((key.KeyChar == ',') &&
+                         !inputLine.Contains(',')))
+                {
+                    if (inputLine.Length < Max_Char_For_Line)
+                    {
+                        inputLine += key.KeyChar;
+                        Console.Write(key.KeyChar);
+                    }
+                }
+            }
+        }
+
+
 
     }
 
