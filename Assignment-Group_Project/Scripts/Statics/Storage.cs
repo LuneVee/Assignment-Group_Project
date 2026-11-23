@@ -748,7 +748,7 @@ namespace Assignment_Group_Project.Scripts.Statics
             // Create a list of product names for the selection prompt!
             List<string> choices = new List<string>();                                                          //Create a List<string> to create a list of "choices"!
 
-            choices.Add("Search:");                                                                             //Add "Search" as the first option to the list of choices!
+            /*choices.Add("Search:");*/                                                                             //Add "Search" as the first option to the list of choices!
             foreach (var product in Products)                                                                   //Loop through each product in the Products list and add its name to the choices list!
             {
                 if (product != null)                                                                            //Check if the product is not null before adding its name to the choices list!
@@ -856,12 +856,12 @@ namespace Assignment_Group_Project.Scripts.Statics
 
             List<string> choices = new List<string>();
             choices.Add("Search:");
-            foreach (var choice in Products)
-            {
+            //foreach (var choice in Products)
+            //{
 
-                choices.Add($"{choice.ProductName}");
+            //    choices.Add($"{choice.ProductName}");
 
-            }
+            //}
 
             //choices = Products.FindAll(item => item != null).Select(item => item.Name).ToList();
             choices.Add("Back To Storage");
@@ -894,8 +894,8 @@ namespace Assignment_Group_Project.Scripts.Statics
 
                     table = new Table();
 
-                    table.AddColumn("Article ");
                     table.AddColumn("Name                ");
+                    table.AddColumn("Article ");
                     table.AddColumn("Quantity");
                     table.AddColumn("Price     ");
                     table.AddColumn("Suppliers           ");
@@ -955,7 +955,8 @@ namespace Assignment_Group_Project.Scripts.Statics
 
                                 foreach (var product in Find_Items_That_Contains_Input)
                                 {
-                                    table.AddRow(product.ProductName!.ToString(),
+                                    table.AddRow(
+                                        product.ProductName!.ToString(),
                                         product.ProductArticleNumber.ToString(),
                                         product.ProductStockQuantity.ToString(),
                                         product.ProductPrice.ToString(),
