@@ -535,7 +535,7 @@ namespace Assignment_Group_Project.Scripts.Statics
             foreach (var choice in Products)
             {
 
-                choices.Add($"{choice.ProductName} - {choice.ProductArticleNumber}");
+                choices.Add($"{choice.ProductName}");
 
             }
 
@@ -567,16 +567,16 @@ namespace Assignment_Group_Project.Scripts.Statics
 
                         table.AddColumn("Product     ");                                                            //Product Name!
                         table.AddColumn("Artical ");                                                                //Artical Number!
-                        //table.AddColumn("Quantity");                                                                //Stock Quantity!
-                        //table.AddColumn("Price       ");                                                            //Price Per Product!
+                        table.AddColumn("Quantity");                                                                //Stock Quantity!
+                        table.AddColumn("Price       ");                                                            //Price Per Product!
                         table.AddColumn("Company     ");                                                            //Company Suppliers!
 
                         //
                         table
                             .AddRow(productToUpdate.ProductName!.ToString(),
                             productToUpdate.ProductArticleNumber.ToString(),
-                            //productToUpdate.ProductStockQuantity.ToString(),
-                            //productToUpdate.ProductPrice.ToString(),
+                            productToUpdate.ProductStockQuantity.ToString(),
+                            productToUpdate.ProductPrice.ToString(),
                             productToUpdate.SupplierName!.ToString());
 
                         //
@@ -597,7 +597,7 @@ namespace Assignment_Group_Project.Scripts.Statics
 
                         string UpdateValue = AnsiConsole
                             .Prompt(new SelectionPrompt<string>()
-                            .AddChoices("Name", "Price", "Quantity", "Tags", "Confirm", "Back To Storage Page"));
+                            .AddChoices("Name", "Price", "Quantity", "Confirm", "Back To Storage Page"));
 
                         switch (UpdateValue)
                         {
@@ -649,7 +649,7 @@ namespace Assignment_Group_Project.Scripts.Statics
                                     CreateTable();
                                     Console.SetCursorPosition(
                                         ((int)User.cursorPosition.X), ((int)User.cursorPosition.Y));
-                                    User.inputDecimal = decimal.Parse(User.ReadLineAsDecimalRange("[cyan]  Quantity: [/]", 9)!);
+                                    User.inputDecimal = decimal.Parse(User.ReadLineAsDecimalRange("[cyan]  Price: [/]", 9)!);
                                     productToUpdate.ProductPrice = User.inputDecimal;
                                 }
                                 catch
@@ -681,10 +681,12 @@ namespace Assignment_Group_Project.Scripts.Statics
 
                                 break;
 
+                            //Not yet in use!
                             case "Add Tags":
-                                AnsiConsole.MarkupLine("Work In Progress");
+
                                 break;
 
+                            //Not yet in use!
                             case "Remove Tags":
 
                                 break;
@@ -857,7 +859,7 @@ namespace Assignment_Group_Project.Scripts.Statics
             foreach (var choice in Products)
             {
 
-                choices.Add($"{choice.ProductName} - {choice.ProductArticleNumber}");
+                choices.Add($"{choice.ProductName}");
 
             }
 
